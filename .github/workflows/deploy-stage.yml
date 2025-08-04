@@ -32,15 +32,6 @@ jobs:
         with:
           os: ${{ matrix.os }}
           version: 10.x.x
-      - name: Debug - Check Required Secrets
-        run: |
-          echo "Checking all required secrets are present:"
-          echo "CLIENTID_STAGE: ${{ secrets.CLIENTID_STAGE != '' && 'Present' || 'MISSING' }}"
-          echo "CLIENTSECRET_STAGE: ${{ secrets.CLIENTSECRET_STAGE != '' && 'Present' || 'MISSING' }}"
-          echo "TECHNICALACCID_STAGE: ${{ secrets.TECHNICALACCID_STAGE != '' && 'Present' || 'MISSING' }}"
-          echo "TECHNICALACCEMAIL_STAGE: ${{ secrets.TECHNICALACCEMAIL_STAGE != '' && 'Present' || 'MISSING' }}"
-          echo "IMSORGID_STAGE: ${{ secrets.IMSORGID_STAGE != '' && 'Present' || 'MISSING' }}"
-          echo "SCOPES_STAGE: ${{ secrets.SCOPES_STAGE != '' && 'Present' || 'MISSING' }}"
       - name: Auth
         uses: adobe/aio-apps-action@3.3.0
         with:
@@ -50,15 +41,15 @@ jobs:
           CLIENTSECRET: ${{ secrets.CLIENTSECRET_STAGE }}
           TECHNICALACCOUNTID: ${{ secrets.TECHNICALACCID_STAGE }}
           TECHNICALACCOUNTEMAIL: ${{ secrets.TECHNICALACCEMAIL_STAGE }}
-          IMSORGID: ${{ secrets.IMSORGID_STAGE }} #should not have @
-          SCOPES: ${{ secrets.SCOPES_STAGE }}
-      - name: Build
-        env:
-          AIO_RUNTIME_NAMESPACE: ${{ secrets.AIO_RUNTIME_NAMESPACE_STAGE }}
-        uses: adobe/aio-apps-action@3.3.0
-        with:
-          os: ${{ matrix.os }}
-          command: build
+          IMSORGID: ${{ secrets.IMSORGID_STAGE }} #should not have
+          SCOPES: "AdobeID,openid"
+      # - name: Build
+      #   env:
+      #     AIO_RUNTIME_NAMESPACE: ${{ secrets.AIO_RUNTIME_NAMESPACE_STAGE }}
+      #   uses: adobe/aio-apps-action@3.3.0
+      #   with:
+      #     os: ${{ matrix.os }}
+      #     command: build
       # - name: Deploy
       #   env:
       #     AIO_RUNTIME_NAMESPACE: ${{ secrets.AIO_RUNTIME_NAMESPACE_STAGE }}
