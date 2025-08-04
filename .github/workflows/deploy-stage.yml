@@ -35,8 +35,8 @@ jobs:
       - name: Debug - Secrets Check
         run: |
           echo "Checking secrets availability:"
-          echo "CLIENTID_STAGE: ${{ secrets.CLIENTID_STAGE != '' && 'Available' || 'Missing' }}"
-          echo "TECHNICALACCOUNTID: ${{ secrets.TECHNICALACCOUNTID != '' && 'Available' || 'Missing' }}"
+          echo "CLIENTID_STAGE: ${{ secrets.CLIENTID_STAGE }}"
+          echo "TECHNICALACCID_STAGE: ${{ secrets.TECHNICALACCID_STAGE }}"
       - name: Auth
         uses: adobe/aio-apps-action@3.3.0
         with:
