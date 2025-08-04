@@ -32,33 +32,15 @@ jobs:
         with:
           os: ${{ matrix.os }}
           version: 10.x.x
-      - name: Debug - Validate Scopes Format
+      - name: Debug - Check Required Secrets
         run: |
-          echo "Validating SCOPES format..."
-          SCOPES="${{ secrets.SCOPES_STAGE }}"
-          
-          # Check if scopes match the required pattern
-          if echo "$SCOPES" | grep -qE '^[0-9a-zA-Z_.s]+(,[0-9a-zA-Z_.s]+)*$'; then
-            echo "✅ SCOPES format is valid"
-            echo "✅ Length: $(echo -n "$SCOPES" | wc -c) characters"
-            echo "✅ No spaces detected"
-          else
-            echo "❌ SCOPES format is INVALID"
-            echo "❌ Expected pattern: ^[0-9a-zA-Z_.s]+(,[0-9a-zA-Z_.s]+)*$"
-            
-            # Check for common issues
-            if echo "$SCOPES" | grep -q ' '; then
-              echo "❌ Contains spaces"
-            fi
-            if echo "$SCOPES" | grep -q '\['; then
-              echo "❌ Contains array brackets"
-            fi
-            if echo "$SCOPES" | grep -q '"'; then
-              echo "❌ Contains quotes"
-            fi
-            
-            exit 1
-          fi
+          echo "Checking all required secrets are present:"
+          echo "CLIENTID_STAGE: ${{ secrets.CLIENTID_STAGE != '' && 'Present' || 'MISSING' }}"
+          echo "CLIENTSECRET_STAGE: ${{ secrets.CLIENTSECRET_STAGE != '' && 'Present' || 'MISSING' }}"
+          echo "TECHNICALACCID_STAGE: ${{ secrets.TECHNICALACCID_STAGE != '' && 'Present' || 'MISSING' }}"
+          echo "TECHNICALACCEMAIL_STAGE: ${{ secrets.TECHNICALACCEMAIL_STAGE != '' && 'Present' || 'MISSING' }}"
+          echo "IMSORGID_STAGE: ${{ secrets.IMSORGID_STAGE != '' && 'Present' || 'MISSING' }}"
+          echo "SCOPES_STAGE: ${{ secrets.SCOPES_STAGE != '' && 'Present' || 'MISSING' }}"
       - name: Auth
         uses: adobe/aio-apps-action@3.3.0
         with:
