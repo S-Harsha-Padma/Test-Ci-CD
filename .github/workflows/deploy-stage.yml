@@ -36,7 +36,7 @@ jobs:
         run: |
           echo "Checking secrets availability:"
           echo "CLIENTID_STAGE: ${{ secrets.CLIENTID_STAGE }}"
-          echo "TECHNICALACCID_STAGE_VAL: ${{ secrets.TECHNICALACCID_STAGE }}"
+          echo "TECHNICALACCID_STAGE: ${{ secrets.TECHNICALACCID_STAGE }}"
       - name: Auth
         uses: adobe/aio-apps-action@3.3.0
         with:
