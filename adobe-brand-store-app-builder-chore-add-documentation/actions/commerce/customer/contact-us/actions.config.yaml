@@ -1,0 +1,20 @@
+contact-us:
+  function: index.js
+  web: 'yes'
+  runtime: nodejs:22
+  inputs:
+    LOG_LEVEL: debug
+    EMAIL_HOST: $EMAIL_HOST
+    EMAIL_PORT: $EMAIL_PORT
+    EMAIL_USER: $EMAIL_USER
+    EMAIL_PASSWORD: $EMAIL_PASSWORD
+    EMAIL_FROM: $EMAIL_FROM
+    EMAIL_TO: $EMAIL_TO
+    EMAIL_SUBJECT: $EMAIL_SUBJECT
+    EMAIL_FOOTER: $EMAIL_FOOTER
+    EMAIL_HEADER: $EMAIL_HEADER
+    EMAIL_LOGO: $EMAIL_LOGO
+    COMMERCE_GRAPHQL_BASE_URL: $COMMERCE_GRAPHQL_BASE_URL
+  annotations:
+    require-adobe-auth: false
+    final: true

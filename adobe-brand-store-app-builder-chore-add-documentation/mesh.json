@@ -1,0 +1,204 @@
+{
+  "meshConfig": {
+    "sources": [
+      {
+        "name": "adobe_store_staging",
+        "handler": {
+          "graphql": {
+            "endpoint": "https://na1-sandbox.api.commerce.adobe.com/LCicpQgaizn8dHcDC3JgUy/graphql",
+            "operationHeaders": {
+              "Magento-Environment-Id": "KkFqBezJvqibWEoPmc6YkP",
+              "Magento-Website-Code": "base",
+              "Magento-Store-Code": "main_website_store",
+              "Magento-Store-View-Code": "default",
+              "X-Api-Key": "not_used",
+              "Magento-Customer-Group": "b6589fc6ab0dc82cf12099d1c2d40ab994e8410c",
+              "Content-Type": "application/json"
+            },
+            "schemaHeaders": {
+              "x-api-key": "not_used",
+              "Magento-Environment-Id": "KkFqBezJvqibWEoPmc6YkP"
+            }
+          }
+        },
+        "responseConfig": {
+          "cache": {
+            "cacheControl": "public, max-age=600"
+          }
+        }
+      },
+      {
+        "name": "ssov2",
+        "handler": {
+          "JsonSchema": {
+            "baseUrl": "https://3582053-903greenboaboa-stage.adobeioruntime.net/api/v1/web/account-ssologin",
+            "operations": [
+              {
+                "type": "Mutation",
+                "field": "ssov2",
+                "path": "/consumer",
+                "method": "POST",
+                "requestSchema": "./requestSchema/sso-request-schema.json",
+                "responseSchema": "./responseSchema/sso-response-schema.json"
+              }
+            ],
+            "operationHeaders": {
+              "Authorization": "{context.headers['authorization']}",
+              "x-gw-ims-org-id": "{context.headers['x-gw-ims-org-id']}",
+              "Content-Type": "application/json"
+            }
+          }
+        }
+      },
+      {
+        "name": "customerGroup",
+        "handler": {
+          "JsonSchema": {
+            "baseUrl": "https://3582053-903greenboaboa-stage.adobeioruntime.net/api/v1/web/customer",
+            "operations": [
+              {
+                "type": "Mutation",
+                "field": "customerGroup",
+                "path": "/group",
+                "method": "POST",
+                "requestSchema": "./requestSchema/cust-req-schema.json",
+                "responseSchema": "./responseSchema/cust-res-schema.json"
+              },
+              {
+                "type": "Mutation",
+                "field": "customerGroupName",
+                "path": "/get-group-name",
+                "method": "POST",
+                "requestSchema": "./requestSchema/get-customer-group.json",
+                "responseSchema": "./responseSchema/get-customer-group.json"
+              }
+            ],
+            "operationHeaders": {
+              "Authorization": "{context.headers['authorization']}",
+              "x-gw-ims-org-id": "{context.headers['x-gw-ims-org-id']}",
+              "Content-Type": "application/json"
+            }
+          }
+        }
+      },
+      {
+        "name": "productStock",
+        "handler": {
+          "JsonSchema": {
+            "baseUrl": "https://3582053-903greenboaboa-stage.adobeioruntime.net/api/v1/web/product",
+            "operations": [
+              {
+                "type": "Query",
+                "field": "productStock",
+                "path": "/stock?sku={args.sku}&product_type={args.product_type}&child_sku={args.child_sku}",
+                "method": "GET",
+                "argTypeMap": {
+                  "sku": {
+                    "type": "string"
+                  },
+                  "product_type": {
+                    "type": "string"
+                  },
+                  "child_sku": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            ],
+            "operationHeaders": {
+              "Authorization": "{context.headers['authorization']}",
+              "x-gw-ims-org-id": "{context.headers['x-gw-ims-org-id']}",
+              "Content-Type": "application/json"
+            }
+          }
+        },
+        "responseConfig": {
+          "cache": {
+            "cacheControl": "public, max-age=600"
+          }
+        }
+      },
+      {
+        "name": "upsAddressValidation",
+        "handler": {
+          "JsonSchema": {
+            "baseUrl": "https://3582053-903greenboaboa-stage.adobeioruntime.net/api/v1/web/ups",
+            "operations": [
+              {
+                "type": "Mutation",
+                "field": "upsAddressValidation",
+                "path": "/validate-address",
+                "method": "POST",
+                "requestSchema": "./requestSchema/add-req-schema.json",
+                "responseSchema": "./responseSchema/add-res-schema.json"
+              }
+            ],
+            "operationHeaders": {
+              "Authorization": "{context.headers['authorization']}",
+              "x-gw-ims-org-id": "{context.headers['x-gw-ims-org-id']}",
+              "Content-Type": "application/json"
+            }
+          }
+        }
+      },
+      {
+        "name": "contactUs",
+        "handler": {
+          "JsonSchema": {
+            "baseUrl": "https://3582053-903greenboaboa-stage.adobeioruntime.net/api/v1/web/customer",
+            "operations": [
+              {
+                "type": "Mutation",
+                "field": "contactUs",
+                "path": "/contact-us",
+                "method": "POST",
+                "requestSchema": "./requestSchema/contactus-req-schema.json",
+                "responseSchema": "./responseSchema/contactus-res-schema.json"
+              }
+            ],
+            "operationHeaders": {
+              "Authorization": "{context.headers['authorization']}",
+              "x-gw-ims-org-id": "{context.headers['x-gw-ims-org-id']}",
+              "Content-Type": "application/json"
+            }
+          }
+        },
+        "responseConfig": {
+          "cache": {
+            "cacheControl": "public, max-age=600"
+          }
+        }
+      }
+    ],
+    "additionalTypeDefs": "extend type SimpleProductView { qty: ID }",
+    "additionalResolvers": ["./resolvers/stock-resolvers.js"],
+    "responseConfig": {
+      "cache": true,
+      "includeHTTPDetails": false,
+      "CORS": {
+        "maxAge": 10,
+        "credentials": true,
+        "methods": ["GET", "POST", "PUT", "HEAD", "OPTIONS"],
+        "exposedHeaders": ["Content-Range", "X-Content-Range"],
+        "origin": [
+          "https://main--adobe-brand-store-eds--magento-ecg-team.aem.page",
+          "https://main--adobe-brand-store-eds--magento-ecg-team.aem.live",
+          "https://edge-stage-graph.adobe.io",
+          "https://summit-2025--adobe-brand-store-eds--magento-ecg-team.aem.page",
+          "https://summit-2025--adobe-brand-store-eds--commerce-demo.aem.page",
+          "https://summit-2025--adobe-brand-store-eds--magento-ecg-team.aem.live",
+          "https://summit-2025--adobe-brand-store-eds--commerce-demo.aem.live",
+          "https://production--adobe-brand-store-eds--magento-ecg-team.aem.page",
+          "https://production--adobe-brand-store-eds--magento-ecg-team.aem.live",
+          "http://localhost:3000",
+          "https://staging.adobestore.com",
+          "https://adobestore.com",
+          "https://edge-graph.adobe.io"
+        ]
+      }
+    }
+  }
+}
