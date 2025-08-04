@@ -41,24 +41,6 @@ jobs:
           echo "TECHNICALACCEMAIL_STAGE: ${{ secrets.TECHNICALACCEMAIL_STAGE != '' && 'Present' || 'MISSING' }}"
           echo "IMSORGID_STAGE: ${{ secrets.IMSORGID_STAGE != '' && 'Present' || 'MISSING' }}"
           echo "SCOPES_STAGE: ${{ secrets.SCOPES_STAGE != '' && 'Present' || 'MISSING' }}"
-          
-          # Check for common format issues
-          echo "Checking parameter formats:"
-          CLIENTID="${{ secrets.CLIENTID_STAGE }}"
-          IMSORGID="${{ secrets.IMSORGID_STAGE }}"
-          TECHACCID="${{ secrets.TECHNICALACCID_STAGE }}"
-          
-          echo "CLIENTID length: $(echo -n "$CLIENTID" | wc -c)"
-          echo "IMSORGID length: $(echo -n "$IMSORGID" | wc -c)"
-          echo "TECHNICALACCID length: $(echo -n "$TECHACCID" | wc -c)"
-          
-          # Check for invalid characters or formatting
-          if echo "$CLIENTID" | grep -q '@'; then
-            echo "⚠️  CLIENTID contains @ (should not)"
-          fi
-          if echo "$IMSORGID" | grep -q '@'; then
-            echo "⚠️  IMSORGID contains @ (should not)" 
-          fi
       - name: Auth
         uses: adobe/aio-apps-action@3.3.0
         with:
