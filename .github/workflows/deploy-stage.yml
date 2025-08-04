@@ -41,8 +41,9 @@ jobs:
           CLIENTSECRET: ${{ secrets.CLIENTSECRET_STAGE }}
           TECHNICALACCOUNTID: ${{ secrets.TECHNICALACCID_STAGE }}
           TECHNICALACCOUNTEMAIL: ${{ secrets.TECHNICALACCEMAIL_STAGE }}
-          IMSORGID: ${{ secrets.IMSORGID_STAGE }} #should not have @
-          # SCOPES: ${{ secrets.SCOPES_STAGE }}
+          IMSORGID: ${{ secrets.IMSORGID_STAGE }}
+          SCOPES: "AdobeID,openid,read_organizations,adobeio_api,read_client_secret,manage_client_secrets,event_receiver_api"
+          # SCOPES: ${{ secrets.SCOPES_STAGE }} 
       # - name: Build
       #   env:
       #     AIO_RUNTIME_NAMESPACE: ${{ secrets.AIO_RUNTIME_NAMESPACE_STAGE }}
