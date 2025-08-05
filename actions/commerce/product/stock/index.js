@@ -1,6 +1,6 @@
 const { Core } = require('@adobe/aio-sdk');
 const { errorResponse } = require('../../../utils');
-const { getAdobeCommerceClient } = require('../../../../lib/adobe-commerce');
+const { getAdobeCommerceClient, actionSuccessResponse } = require('../../../../lib/adobe-commerce');
 const { HTTP_OK, HTTP_INTERNAL_ERROR } = require('../../../../lib/http');
 const PRODUCT_TYPE_BUNDLE = 'bundle';
 
@@ -12,6 +12,11 @@ const PRODUCT_TYPE_BUNDLE = 'bundle';
  */
 async function main(params) {
   const logger = Core.Logger('product-stock', { level: params.LOG_LEVEL || 'info' });
+  return errorResponse(
+    HTTP_INTERNAL_ERROR,
+    'Success.',
+    logger
+  );
   try {
     const client = await getAdobeCommerceClient(params);
 
