@@ -7,27 +7,32 @@ on:
 jobs:
   deploy:
     name: Deploy to Stage
+    environment: stage
     runs-on: ${{ matrix.os }}
     strategy:
       max-parallel: 1
       matrix:
-        node-version: ['22']
+        node-version: ['20']
         os: [ubuntu-latest]
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
       - name: Use Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@v1
+        uses: actions/setup-node@v4
         with:
           node-version: ${{ matrix.node-version }}
+      - name: Debug - Node Info
+        run: |
+          echo "Node version: $(node --version)"
+          echo "NPM version: $(npm --version)"
       - name: npm install
         run: npm i
       - name: Setup CLI
         uses: adobe/aio-cli-setup-action@1.3.0
         with:
           os: ${{ matrix.os }}
-          version: 9.x.x
-      - name: OAuth
+          version: 10.x.x
+      - name: Oauth
         uses: adobe/aio-apps-action@3.3.0
         with:
           os: ${{ matrix.os }}
@@ -38,7 +43,7 @@ jobs:
           TECHNICALACCOUNTEMAIL: ${{ secrets.TECHNICALACCEMAIL_STAGE }}
           IMSORGID: ${{ secrets.IMSORGID_STAGE }}
           SCOPES: AdobeID,openid,read_organizations,additional_info.projectedProductContext,additional_info.roles,adobeio_api,event_receiver_api
-      - name: Build
+      - name: Build1
         env:
           AIO_RUNTIME_NAMESPACE: ${{ secrets.AIO_RUNTIME_NAMESPACE_STAGE }}
         uses: adobe/aio-apps-action@3.3.0
@@ -55,7 +60,9 @@ jobs:
           AIO_PROJECT_WORKSPACE_ID: ${{ secrets.AIO_PROJECT_WORKSPACE_ID_STAGE }}
           AIO_PROJECT_WORKSPACE_NAME: ${{ secrets.AIO_PROJECT_WORKSPACE_NAME_STAGE }}
           AIO_PROJECT_WORKSPACE_DETAILS_SERVICES: ${{ secrets.AIO_PROJECT_WORKSPACE_DETAILS_SERVICES_STAGE }}
+          SERVICE_API_KEY: ${{ secrets.SERVICE_API_KEY_STAGE }}
         uses: adobe/aio-apps-action@3.3.0
         with:
           os: ${{ matrix.os }}
           command: deploy
+          noPublish: true
