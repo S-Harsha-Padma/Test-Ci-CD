@@ -410,4 +410,4 @@ application:
           - provider_metadata: dx_commerce_events
             event_codes:
               - com.adobe.commerce.observer.sales_order_place_after
-        runtime_action: commerce-events/consume
+        runtime_action: commerce-events/erp-order-status
