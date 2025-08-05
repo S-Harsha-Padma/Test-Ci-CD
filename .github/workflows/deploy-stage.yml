@@ -55,7 +55,7 @@ jobs:
 #          TECHNICALACCOUNTEMAIL: ${{ secrets.TECHNICALACCEMAIL_STAGE }}
 #          IMSORGID: ${{ secrets.IMSORGID_STAGE }}
 #          SCOPES: ${{ secrets.SCOPES_STAGE_JWT }}
-      - name: Build
+      - name: Build1
         env:
           AIO_RUNTIME_NAMESPACE: ${{ secrets.AIO_RUNTIME_NAMESPACE_STAGE }}
         uses: adobe/aio-apps-action@3.3.0
