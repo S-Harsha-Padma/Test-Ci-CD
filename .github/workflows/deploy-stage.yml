@@ -27,7 +27,7 @@ jobs:
         with:
           os: ${{ matrix.os }}
           version: 9.x.x
-      - name: Auth
+      - name: OAuth
         uses: adobe/aio-apps-action@3.3.0
         with:
           os: ${{ matrix.os }}
