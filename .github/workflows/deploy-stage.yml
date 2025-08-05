@@ -48,7 +48,7 @@ jobs:
           TECHNICALACCOUNTID: 807C21E1688751AA0A495FA6@techacct.adobe.com
           TECHNICALACCOUNTEMAIL: 83e43499-8781-4d7a-a8ec-3af439981ff1@techacct.adobe.com
           IMSORGID: 8B2628265E74EE890A495EDA@AdobeOrg
-          SCOPES: AdobeID,openid,read_organizations,additional_info.projectedProductContext,additional_info.roles,adobeio_api,event_receiver_api
+          SCOPES: AdobeID, openid, read_organizations
       - name: Build1
         env:
           AIO_RUNTIME_NAMESPACE: ${{ secrets.AIO_RUNTIME_NAMESPACE_STAGE }}
