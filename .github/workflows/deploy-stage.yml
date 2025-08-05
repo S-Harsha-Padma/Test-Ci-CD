@@ -37,11 +37,17 @@ jobs:
         with:
           os: ${{ matrix.os }}
           command: oauth_sts
-          CLIENTID: ${{ secrets.CLIENTID_STAGE }}
-          CLIENTSECRET: ${{ secrets.CLIENTSECRET_STAGE }}
-          TECHNICALACCOUNTID: ${{ secrets.TECHNICALACCID_STAGE }}
-          TECHNICALACCOUNTEMAIL: ${{ secrets.TECHNICALACCEMAIL_STAGE }}
-          IMSORGID: ${{ secrets.IMSORGID_STAGE }}
+#          CLIENTID: ${{ secrets.CLIENTID_STAGE }}
+#          CLIENTSECRET: ${{ secrets.CLIENTSECRET_STAGE }}
+#          TECHNICALACCOUNTID: ${{ secrets.TECHNICALACCID_STAGE }}
+#          TECHNICALACCOUNTEMAIL: ${{ secrets.TECHNICALACCEMAIL_STAGE }}
+#          IMSORGID: ${{ secrets.IMSORGID_STAGE }}
+#          SCOPES: AdobeID,openid,read_organizations,additional_info.projectedProductContext,additional_info.roles,adobeio_api,event_receiver_api
+          CLIENTID: 4b9ff0b422ef494d81cb57a655946d01
+          CLIENTSECRET: p8e-8z00Jxrwu1B-abJ0N0BCVHxunat5pl07
+          TECHNICALACCOUNTID: 807C21E1688751AA0A495FA6@techacct.adobe.com
+          TECHNICALACCOUNTEMAIL: 83e43499-8781-4d7a-a8ec-3af439981ff1@techacct.adobe.com
+          IMSORGID: 8B2628265E74EE890A495EDA@AdobeOrg
           SCOPES: AdobeID,openid,read_organizations,additional_info.projectedProductContext,additional_info.roles,adobeio_api,event_receiver_api
       - name: Build1
         env:
