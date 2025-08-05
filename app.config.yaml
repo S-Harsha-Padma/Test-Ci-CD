@@ -241,7 +241,7 @@ application:
           $include: ./actions/commerce/events/order/actions.config.yaml
           erp-order-status:
             function: actions/commerce/events/order/status/index.js
-            web: 'yes'
+            web: 'no'
             runtime: nodejs:22
             inputs:
               LOG_LEVEL: debug
@@ -263,7 +263,7 @@ application:
               final: true
           create-invoice:
             function: actions/commerce/events/order/invoice/index.js
-            web: 'yes'
+            web: 'no'
             runtime: nodejs:22
             inputs:
               LOG_LEVEL: debug
@@ -281,7 +281,7 @@ application:
               final: true
           add-cost-center:
             function: actions/commerce/events/order/fed-ex/index.js
-            web: 'yes'
+            web: 'no'
             runtime: nodejs:22
             inputs:
               LOG_LEVEL: debug
@@ -368,40 +368,40 @@ application:
             annotations:
               require-adobe-auth: false
               final: true
-#      inventory-update:
-#        license: Apache-2.0
-#        actions:
-#          bulk-update:
-#            function: actions/commerce/inventory/index.js
-#            web: 'no'
-#            runtime: nodejs:22
-#            inputs:
-#              LOG_LEVEL: debug
-#              SFTP_USERNAME: $SFTP_USERNAME
-#              SFTP_PASSWORD: $SFTP_PASSWORD
-#              SFTP_HOST: $SFTP_HOST
-#              FILE_NAME: $FILE_NAME
-#              SFTP_REMOTE_DIR: $SFTP_REMOTE_DIR
-#              COMMERCE_BASE_URL: $COMMERCE_BASE_URL
-#              OAUTH_CLIENT_ID: $OAUTH_CLIENT_ID
-#              OAUTH_CLIENT_SECRETS: $OAUTH_CLIENT_SECRETS
-#              OAUTH_TECHNICAL_ACCOUNT_ID: $OAUTH_TECHNICAL_ACCOUNT_ID
-#              OAUTH_TECHNICAL_ACCOUNT_EMAIL: $OAUTH_TECHNICAL_ACCOUNT_EMAIL
-#              OAUTH_IMS_ORG_ID: $OAUTH_IMS_ORG_ID
-#              OAUTH_SCOPES: $OAUTH_SCOPES
-#              AIO_CLI_ENV: $AIO_CLI_ENV
-#            annotations:
-#              final: true
-#              require-adobe-auth: false
-#        triggers:
-#          inventoryBulkUpdate:
-#            feed: /whisk.system/alarms/alarm
-#            inputs:
-#              cron: '0 1 * * *'
-#        rules:
-#          inventoryBulkUpdateRule:
-#            trigger: inventoryBulkUpdate
-#            action: bulk-update
+      inventory-update:
+        license: Apache-2.0
+        actions:
+          bulk-update:
+            function: actions/commerce/inventory/index.js
+            web: 'no'
+            runtime: nodejs:22
+            inputs:
+              LOG_LEVEL: debug
+              SFTP_USERNAME: $SFTP_USERNAME
+              SFTP_PASSWORD: $SFTP_PASSWORD
+              SFTP_HOST: $SFTP_HOST
+              FILE_NAME: $FILE_NAME
+              SFTP_REMOTE_DIR: $SFTP_REMOTE_DIR
+              COMMERCE_BASE_URL: $COMMERCE_BASE_URL
+              OAUTH_CLIENT_ID: $OAUTH_CLIENT_ID
+              OAUTH_CLIENT_SECRETS: $OAUTH_CLIENT_SECRETS
+              OAUTH_TECHNICAL_ACCOUNT_ID: $OAUTH_TECHNICAL_ACCOUNT_ID
+              OAUTH_TECHNICAL_ACCOUNT_EMAIL: $OAUTH_TECHNICAL_ACCOUNT_EMAIL
+              OAUTH_IMS_ORG_ID: $OAUTH_IMS_ORG_ID
+              OAUTH_SCOPES: $OAUTH_SCOPES
+              AIO_CLI_ENV: $AIO_CLI_ENV
+            annotations:
+              final: true
+              require-adobe-auth: false
+        triggers:
+          inventoryBulkUpdate:
+            feed: /whisk.system/alarms/alarm
+            inputs:
+              cron: '0 1 * * *'
+        rules:
+          inventoryBulkUpdateRule:
+            trigger: inventoryBulkUpdate
+            action: bulk-update
   events:
     registrations:
       Commerce events consumer:
