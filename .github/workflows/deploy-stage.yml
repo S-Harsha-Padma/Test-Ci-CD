@@ -32,18 +32,18 @@ jobs:
         with:
           os: ${{ matrix.os }}
           version: 10.x.x
-      - name: Oauth
-        uses: adobe/aio-apps-action@3.3.0
-        with:
-          os: ${{ matrix.os }}
-          command: oauth_sts
-          CLIENTID: ${{ secrets.CLIENTID_STAGE }}
-          CLIENTSECRET: ${{ secrets.CLIENTSECRET_STAGE }}
-          TECHNICALACCOUNTID: ${{ secrets.TECHNICALACCID_STAGE }}
-          TECHNICALACCOUNTEMAIL: ${{ secrets.TECHNICALACCEMAIL_STAGE }}
-          IMSORGID: ${{ secrets.IMSORGID_STAGE }}
-          #SCOPES: ${{ secrets.SCOPES_STAGE }}
-          SCOPES: AdobeID,openid,read_organizations,additional_info.projectedProductContext,additional_info.roles,adobeio_api,event_receiver_api
+#      - name: Oauth
+#        uses: adobe/aio-apps-action@3.3.0
+#        with:
+#          os: ${{ matrix.os }}
+#          command: oauth_sts
+#          CLIENTID: ${{ secrets.CLIENTID_STAGE }}
+#          CLIENTSECRET: ${{ secrets.CLIENTSECRET_STAGE }}
+#          TECHNICALACCOUNTID: ${{ secrets.TECHNICALACCID_STAGE }}
+#          TECHNICALACCOUNTEMAIL: ${{ secrets.TECHNICALACCEMAIL_STAGE }}
+#          IMSORGID: ${{ secrets.IMSORGID_STAGE }}
+#          #SCOPES: ${{ secrets.SCOPES_STAGE }}
+#          SCOPES: AdobeID,openid,read_organizations,additional_info.projectedProductContext,additional_info.roles,adobeio_api,event_receiver_api
       #      - name: JWT Auth
 #        uses: adobe/aio-apps-action@3.3.0
 #        with:
