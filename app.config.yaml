@@ -404,13 +404,6 @@ application:
             action: bulk-update
   events:
     registrations:
-      Event registration for 3rd party system:
-        description: Event registration for 3rd party system
-        events_of_interest:
-          - provider_metadata: 3rd_party_custom_events
-            event_codes:
-              - com.3rdparty.events.test.Event1
-        runtime_action: 3rd-party-events/consume
       Commerce events consumer:
         description: Consumes events from Adobe Commerce
         events_of_interest:
