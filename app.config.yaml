@@ -241,7 +241,7 @@ application:
           $include: ./actions/commerce/events/order/actions.config.yaml
           erp-order-status:
             function: actions/commerce/events/order/status/index.js
-            web: 'no'
+            web: 'yes'
             runtime: nodejs:22
             inputs:
               LOG_LEVEL: debug
@@ -263,7 +263,7 @@ application:
               final: true
           create-invoice:
             function: actions/commerce/events/order/invoice/index.js
-            web: 'no'
+            web: 'yes'
             runtime: nodejs:22
             inputs:
               LOG_LEVEL: debug
@@ -281,7 +281,7 @@ application:
               final: true
           add-cost-center:
             function: actions/commerce/events/order/fed-ex/index.js
-            web: 'no'
+            web: 'yes'
             runtime: nodejs:22
             inputs:
               LOG_LEVEL: debug
