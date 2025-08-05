@@ -297,6 +297,15 @@ application:
               FEDEX_CODE: $FEDEX_CODE
             annotations:
               final: true
+          hello:
+            function: actions/commerce/events/hello.js
+            web: 'no'
+            runtime: nodejs:22
+            inputs:
+              LOG_LEVEL: debug
+            annotations:
+              require-adobe-auth: false
+              final: true
         triggers:
           every15Minute:
             feed: /whisk.system/alarms/interval
