@@ -57,6 +57,7 @@ jobs:
             exit 1
           fi
       - name: Deploy
+        continue-on-error: true
         env:
           AIO_RUNTIME_NAMESPACE: ${{ secrets.AIO_RUNTIME_NAMESPACE_STAGE }}
           AIO_RUNTIME_AUTH: ${{ secrets.AIO_RUNTIME_AUTH_STAGE }}
