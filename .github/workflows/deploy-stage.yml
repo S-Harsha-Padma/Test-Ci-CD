@@ -67,3 +67,4 @@ jobs:
         with:
           os: ${{ matrix.os }}
           command: deploy
+          noPublish: true
