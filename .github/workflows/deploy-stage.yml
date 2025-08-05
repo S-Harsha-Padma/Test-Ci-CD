@@ -51,7 +51,6 @@ jobs:
           os: ${{ matrix.os }}
           command: build
       - name: Deploy
-        id: deploy_step
         continue-on-error: true
         env:
           AIO_RUNTIME_NAMESPACE: ${{ secrets.AIO_RUNTIME_NAMESPACE_STAGE }}
@@ -64,27 +63,9 @@ jobs:
           AIO_PROJECT_WORKSPACE_DETAILS_SERVICES: ${{ secrets.AIO_PROJECT_WORKSPACE_DETAILS_SERVICES_STAGE }}
           SERVICE_API_KEY: ${{ secrets.SERVICE_API_KEY_STAGE }}
           AIO_PROJECT_ORG_IMS__ORG__ID: ${{ secrets.AIO_PROJECT_IMS_ORG_ID_STAGE }}
-#          AIO_EVENTS_PROVIDERMETADATA_TO_PROVIDER_MAPPING: dx_commerce_events:725f5ee3-f9b9-404c-be73-e5fba7b59b0b
+          AIO_EVENTS_PROVIDERMETADATA_TO_PROVIDER_MAPPING: dx_commerce_events:725f5ee3-f9b9-404c-be73-e5fba7b59b0b
         uses: adobe/aio-apps-action@3.3.0
         with:
           os: ${{ matrix.os }}
           command: deploy
           noPublish: true
-      - name: Validate Deploy Error
-        if: steps.deploy_step.outcome == 'failure'
-        run: |
-          echo "Deploy step failed - checking if it's an acceptable error..."
-
-          # Re-run the deploy to capture the error message
-          # (This is a workaround since we can't access the previous step's logs directly)
-          set +e
-          output=$(/usr/local/bin/aio app deploy --no-build --no-publish 2>&1)
-
-          if echo "$output" | grep -q "No provider id mapping found for provider metadata.*Skipping event registration"; then
-            echo "✅ Found expected provider metadata error - this is acceptable"
-            echo "Deploy completed with expected warning"
-          else
-            echo "❌ Deploy failed with unexpected error:"
-            echo "$output"
-            exit 1  # Fail the workflow
-          fi
