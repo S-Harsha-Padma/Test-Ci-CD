@@ -42,7 +42,8 @@ jobs:
           TECHNICALACCOUNTID: ${{ secrets.TECHNICALACCID_STAGE }}
           TECHNICALACCOUNTEMAIL: ${{ secrets.TECHNICALACCEMAIL_STAGE }}
           IMSORGID: ${{ secrets.IMSORGID_STAGE }}
-          SCOPES: ${{ secrets.SCOPES_STAGE }}
+          #SCOPES: ${{ secrets.SCOPES_STAGE }}
+          SCOPES: "AdobeID","openid","read_organizations","additional_info.projectedProductContext","additional_info.roles","adobeio_api","event_receiver_api"
 #      - name: JWT Auth
 #        uses: adobe/aio-apps-action@3.3.0
 #        with:
