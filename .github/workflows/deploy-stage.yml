@@ -50,6 +50,12 @@ jobs:
         with:
           os: ${{ matrix.os }}
           command: build
+      - name: Check required environment variables
+        run: |
+          if [ -z "${{ secrets.AIO_EVENTS_PROVIDERMETADATA_TO_PROVIDER_MAPPING_STAGE }}" ]; then
+            echo "❌ Error: Required variable to deploy AIO_EVENTS_PROVIDERMETADATA_TO_PROVIDER_MAPPING_STAGE is not set."
+            exit 1
+          fi
       - name: Deploy
         env:
           AIO_RUNTIME_NAMESPACE: ${{ secrets.AIO_RUNTIME_NAMESPACE_STAGE }}
@@ -63,19 +69,8 @@ jobs:
           SERVICE_API_KEY: ${{ secrets.SERVICE_API_KEY_STAGE }}
           AIO_PROJECT_ORG_IMS__ORG__ID: ${{ secrets.AIO_PROJECT_IMS_ORG_ID_STAGE }}
           AIO_EVENTS_PROVIDERMETADATA_TO_PROVIDER_MAPPING: dx_commerce_events:725f5ee3-f9b9-404c-be73-e5fba7b59b0b
-        run: |
-          set +e
-          OUTPUT=$(aio app deploy --no-publish 2>&1)
-          EXIT_CODE=$?
-          echo "$OUTPUT"
-          
-          if echo "$OUTPUT" | grep -q "No environment variables for provider metadata to provider id mappings found"; then
-            echo "❌ Deployment failed due to missing provider metadata mapping."
-            exit 1
-          fi
-          
-          if [ $EXIT_CODE -ne 0 ]; then
-            echo "⚠️ Deployment exited with code $EXIT_CODE but without critical error, ignoring."
-          fi
-          
-          exit 0
+        uses: adobe/aio-apps-action@3.3.0
+        with:
+          os: ${{ matrix.os }}
+          command: deploy
+          noPublish: true
