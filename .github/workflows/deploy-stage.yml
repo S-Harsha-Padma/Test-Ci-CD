@@ -37,32 +37,32 @@ jobs:
         with:
           os: ${{ matrix.os }}
           command: oauth_sts
-          CLIENTID: a2441fcbc4c04670938dd934ef29288b
+          CLIENTID: ${{ secrets.CLIENTID_STAGE }}
           CLIENTSECRET: p8e-8z00Jxrwu1B-abJ0N0BCVHxunat5pl07
-          TECHNICALACCOUNTID: 807C21E1688751AA0A495FA6@techacct.adobe.com
-          TECHNICALACCOUNTEMAIL: 83e43499-8781-4d7a-a8ec-3af439981ff1@techacct.adobe.com
-          IMSORGID: 8B2628265E74EE890A495EDA@AdobeOrg
+          TECHNICALACCOUNTID: ${{ secrets.TECHNICALACCID_STAGE }}
+          TECHNICALACCOUNTEMAIL: ${{ secrets.TECHNICALACCEMAIL_STAGE }}
+          IMSORGID: ${{ secrets.IMSORGID_STAGE }}
           SCOPES: AdobeID,openid,read_organizations,additional_info.projectedProductContext,additional_info.roles,adobeio_api,event_receiver_api
-      - name: Build1
-        env:
-          AIO_RUNTIME_NAMESPACE: ${{ secrets.AIO_RUNTIME_NAMESPACE_STAGE }}
-        uses: adobe/aio-apps-action@3.3.0
-        with:
-          os: ${{ matrix.os }}
-          command: build
-      - name: Deploy
-        env:
-          AIO_RUNTIME_NAMESPACE: ${{ secrets.AIO_RUNTIME_NAMESPACE_STAGE }}
-          AIO_RUNTIME_AUTH: ${{ secrets.AIO_RUNTIME_AUTH_STAGE }}
-          AIO_PROJECT_ID: ${{ secrets.AIO_PROJECT_ID_STAGE }}
-          AIO_PROJECT_NAME: ${{ secrets.AIO_PROJECT_NAME_STAGE }}
-          AIO_PROJECT_ORG_ID: ${{ secrets.AIO_PROJECT_ORG_ID_STAGE }}
-          AIO_PROJECT_WORKSPACE_ID: ${{ secrets.AIO_PROJECT_WORKSPACE_ID_STAGE }}
-          AIO_PROJECT_WORKSPACE_NAME: ${{ secrets.AIO_PROJECT_WORKSPACE_NAME_STAGE }}
-          AIO_PROJECT_WORKSPACE_DETAILS_SERVICES: ${{ secrets.AIO_PROJECT_WORKSPACE_DETAILS_SERVICES_STAGE }}
-          SERVICE_API_KEY: ${{ secrets.SERVICE_API_KEY_STAGE }}
-        uses: adobe/aio-apps-action@3.3.0
-        with:
-          os: ${{ matrix.os }}
-          command: deploy
-          noPublish: true
+#      - name: Build1
+#        env:
+#          AIO_RUNTIME_NAMESPACE: ${{ secrets.AIO_RUNTIME_NAMESPACE_STAGE }}
+#        uses: adobe/aio-apps-action@3.3.0
+#        with:
+#          os: ${{ matrix.os }}
+#          command: build
+#      - name: Deploy
+#        env:
+#          AIO_RUNTIME_NAMESPACE: ${{ secrets.AIO_RUNTIME_NAMESPACE_STAGE }}
+#          AIO_RUNTIME_AUTH: ${{ secrets.AIO_RUNTIME_AUTH_STAGE }}
+#          AIO_PROJECT_ID: ${{ secrets.AIO_PROJECT_ID_STAGE }}
+#          AIO_PROJECT_NAME: ${{ secrets.AIO_PROJECT_NAME_STAGE }}
+#          AIO_PROJECT_ORG_ID: ${{ secrets.AIO_PROJECT_ORG_ID_STAGE }}
+#          AIO_PROJECT_WORKSPACE_ID: ${{ secrets.AIO_PROJECT_WORKSPACE_ID_STAGE }}
+#          AIO_PROJECT_WORKSPACE_NAME: ${{ secrets.AIO_PROJECT_WORKSPACE_NAME_STAGE }}
+#          AIO_PROJECT_WORKSPACE_DETAILS_SERVICES: ${{ secrets.AIO_PROJECT_WORKSPACE_DETAILS_SERVICES_STAGE }}
+#          SERVICE_API_KEY: ${{ secrets.SERVICE_API_KEY_STAGE }}
+#        uses: adobe/aio-apps-action@3.3.0
+#        with:
+#          os: ${{ matrix.os }}
+#          command: deploy
+#          noPublish: true
