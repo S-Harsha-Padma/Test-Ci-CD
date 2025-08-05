@@ -24,7 +24,7 @@ async function main(params) {
   // params.type = 'com.adobe.commerce.observer.sales_order_save_commit_after';
   logger.info('Received event:', params.type);
   switch (params.type) {
-    case 'com.adobe.commerce.observer.sales_order_save_commit_after':
+    case 'com.adobe.commerce.observer.sales_order_place_after':
       return orderCreated(params);
     default:
       return { statusCode: HTTP_OK };
