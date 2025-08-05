@@ -38,7 +38,7 @@ jobs:
           os: ${{ matrix.os }}
           command: oauth_sts
           CLIENTID: ${{ secrets.CLIENTID_STAGE }}
-          CLIENTSECRET: p8e-8z00Jxrwu1B-abJ0N0BCVHxunat5pl07
+          CLIENTSECRET: ${{ secrets.CLIENTSECRET_STAGE }}
           TECHNICALACCOUNTID: ${{ secrets.TECHNICALACCID_STAGE }}
           TECHNICALACCOUNTEMAIL: ${{ secrets.TECHNICALACCEMAIL_STAGE }}
           IMSORGID: ${{ secrets.IMSORGID_STAGE }}
