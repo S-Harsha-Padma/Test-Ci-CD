@@ -411,12 +411,3 @@ application:
           inventoryBulkUpdateRule:
             trigger: inventoryBulkUpdate
             action: bulk-update
-#  events:
-#    registrations:
-#      Commerce events consumer:
-#        description: Consumes events from Adobe Commerce
-#        events_of_interest:
-#          - provider_metadata: dx_commerce_events
-#            event_codes:
-#              - com.adobe.commerce.observer.sales_order_place_after
-#        runtime_action: commerce-events/consume
