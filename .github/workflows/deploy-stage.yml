@@ -53,11 +53,10 @@ jobs:
       - name: Check required environment variables
         run: |
           if [ -z "${{ secrets.AIO_EVENTS_PROVIDERMETADATA_TO_PROVIDER_MAPPING_STAGE }}" ]; then
-            echo "❌ Error: Required variable to deploy AIO_EVENTS_PROVIDERMETADATA_TO_PROVIDER_MAPPING_STAGE is not set."
+            echo "Error: Required variable to deploy AIO_EVENTS_PROVIDERMETADATA_TO_PROVIDER_MAPPING_STAGE is not set."
             exit 1
           fi
       - name: Deploy
-        continue-on-error: true
         env:
           AIO_RUNTIME_NAMESPACE: ${{ secrets.AIO_RUNTIME_NAMESPACE_STAGE }}
           AIO_RUNTIME_AUTH: ${{ secrets.AIO_RUNTIME_AUTH_STAGE }}
