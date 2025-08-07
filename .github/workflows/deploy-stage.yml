@@ -63,7 +63,6 @@ jobs:
         env:
           AIO_RUNTIME_NAMESPACE: ${{ secrets.AIO_RUNTIME_NAMESPACE_STAGE }}
           LOG_LEVEL: info
-          VERTEX_SERVICE_URL: https://calcconnect.vertexsmb.com/vertex-ws/services/CalculateTax90Test
         uses: adobe/aio-apps-action@3.3.0
         with:
           os: ${{ matrix.os }}
