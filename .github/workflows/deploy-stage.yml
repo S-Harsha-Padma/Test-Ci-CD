@@ -50,7 +50,7 @@ jobs:
         with:
           os: ${{ matrix.os }}
           version: 10.x.x
-      - name: Oauth Server to Server
+      - name: Oauth Server to Serve
         uses: adobe/aio-apps-action@3.3.0
         with:
           os: ${{ matrix.os }}
