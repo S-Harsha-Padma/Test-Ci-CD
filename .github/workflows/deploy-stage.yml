@@ -1,4 +1,4 @@
-name: AIO App CI/CD Test
+name: AppBuilder Stage Instance Deployment
 
 on:
   push:
@@ -6,7 +6,7 @@ on:
       - stage
 jobs:
   deploy:
-    name: Deploy to Stage
+    name: Deploy to Stage Instance
     environment: stage
     runs-on: ${{ matrix.os }}
     strategy:
@@ -21,20 +21,36 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: ${{ matrix.node-version }}
+          cache: 'npm'
       - name: Debug - Node Info
         run: |
           echo "Node version: $(node --version)"
           echo "NPM version: $(npm --version)"
-      - name: npm install
-        run: npm i
+      - name: Cache node modules
+        uses: actions/cache@v4
+        env:
+          cache-name: cache-node-modules-stage
+        with:
+          path: |
+            ~/.npm
+            node_modules
+          key: ${{ runner.os }}-${{ env.cache-name }}-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-${{ env.cache-name }}-
+            ${{ runner.os }}-cache-node-modules-
+            ${{ runner.os }}-
+      - if: ${{ steps.cache-npm.outputs.cache-hit != 'true' }}
+        name: List dependencies (cache miss)
+        continue-on-error: true
+        run: npm list --depth=0
+      - name: Install Dependencies
+        run: npm ci --prefer-offline
       - name: Setup CLI
         uses: adobe/aio-cli-setup-action@1.3.0
         with:
           os: ${{ matrix.os }}
           version: 10.x.x
-      - name: Check ENV
-        run: echo "This is Stage"
-      - name: Oauth
+      - name: Oauth Server to Server
         uses: adobe/aio-apps-action@3.3.0
         with:
           os: ${{ matrix.os }}
