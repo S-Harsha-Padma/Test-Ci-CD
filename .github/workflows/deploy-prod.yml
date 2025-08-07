@@ -1,4 +1,4 @@
-name: AIO App CI/CD Test
+name: AIO App CI/CD Prod Test
 
 on:
   push:
