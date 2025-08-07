@@ -39,7 +39,7 @@ jobs:
           echo "Node version: $(node --version)"
           echo "NPM version: $(npm --version)"
       - if: ${{ steps.cache-npm.outputs.cache-hit != 'true' }}
-        name: Install Dependencie
+        name: Install Dependencies
         run: |
           npm ci --prefer-offline
           npm list --depth=0
@@ -76,8 +76,8 @@ jobs:
           AIO_PROJECT_WORKSPACE_ID: ${{ secrets.AIO_PROJECT_WORKSPACE_ID_STAGE }}
           AIO_PROJECT_WORKSPACE_NAME: ${{ secrets.AIO_PROJECT_WORKSPACE_NAME_STAGE }}
           AIO_PROJECT_WORKSPACE_DETAILS_SERVICES: ${{ secrets.AIO_PROJECT_WORKSPACE_DETAILS_SERVICES_STAGE }}
-          SERVICE_API_KEY: ${{ secrets.SERVICE_API_KEY_STAGE }}
-          AIO_PROJECT_ORG_IMS__ORG__ID: ${{ secrets.AIO_PROJECT_IMS_ORG_ID_STAGE }}
+          # SERVICE_API_KEY: ${{ secrets.SERVICE_API_KEY_STAGE }}
+          AIO_PROJECT_ORG_IMS__ORG__ID: ${{ secrets.IMSORGID_STAGE }}
         uses: adobe/aio-apps-action@3.3.0
         with:
           os: ${{ matrix.os }}
