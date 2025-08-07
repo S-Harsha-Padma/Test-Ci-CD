@@ -32,6 +32,8 @@ jobs:
         with:
           os: ${{ matrix.os }}
           version: 10.x.x
+      - name: Check ENV
+        run: echo "This is Stage"
       - name: Oauth
         uses: adobe/aio-apps-action@3.3.0
         with:
