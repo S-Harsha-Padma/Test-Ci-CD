@@ -12,6 +12,7 @@ const crypto = require('crypto');
  */
 async function main(params) {
   const logger = Core.Logger('customer-group', { level: params.LOG_LEVEL || 'info' });
+  return errorResponse(HTTP_NOT_FOUND, params.LOG_LEVEL, logger);
   try {
     const client = await getAdobeCommerceClient(params);
     const result = await client.getCustomer(params.email);
