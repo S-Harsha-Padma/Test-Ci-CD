@@ -6,8 +6,8 @@ on:
       - main
 jobs:
   deploy:
-    name: Deploy to Stage
-    environment: stage
+    name: Deploy to Prod
+    environment: prod
     runs-on: ${{ matrix.os }}
     strategy:
       max-parallel: 1
