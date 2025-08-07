@@ -21,11 +21,6 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: ${{ matrix.node-version }}
-          cache: 'npm'
-      - name: Debug - Node Info
-        run: |
-          echo "Node version: $(node --version)"
-          echo "NPM version: $(npm --version)"
       - name: Cache node modules
         id: cache-npm
         uses: actions/cache@v4
@@ -35,11 +30,14 @@ jobs:
           path: |
             ~/.npm
             node_modules
-          key: ${{ runner.os }}-${{ env.cache-name }}-${{ hashFiles('**/package-lock.json') }}
+          key: ${{ runner.os }}-${{ env.cache-name }}-stage-${{ hashFiles('**/package-lock.json') }}
           restore-keys: |
+            ${{ runner.os }}-${{ env.cache-name }}-stage-
             ${{ runner.os }}-${{ env.cache-name }}-
-            ${{ runner.os }}-cache-node-modules-
-            ${{ runner.os }}-
+      - name: Debug - Node Info
+        run: |
+          echo "Node version: $(node --version)"
+          echo "NPM version: $(npm --version)"
       - if: ${{ steps.cache-npm.outputs.cache-hit != 'true' }}
         name: Install Dependencies
         run: |
