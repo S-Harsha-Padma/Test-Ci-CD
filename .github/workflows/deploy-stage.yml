@@ -39,7 +39,7 @@ jobs:
           echo "Node version: $(node --version)"
           echo "NPM version: $(npm --version)"
       - if: ${{ steps.cache-npm.outputs.cache-hit != 'true' }}
-        name: Install Dependencies
+        name: Install Dependencie
         run: |
           npm ci --prefer-offline
           npm list --depth=0
