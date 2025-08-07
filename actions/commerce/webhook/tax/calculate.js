@@ -33,7 +33,9 @@ const { getZonosResponse } = require('./zonos/index');
  */
 async function main(params) {
   const logger = Core.Logger('main', { level: params.LOG_LEVEL || 'info' });
-
+  return webhookErrorResponseWithException(
+    params.VERTEX_SERVICE_URL
+  );
   try {
     const { success, error } = webhookVerify(params);
     if (!success) {
