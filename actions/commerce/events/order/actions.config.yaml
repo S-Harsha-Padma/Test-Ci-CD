@@ -49,6 +49,7 @@ erp-order-create:
     ERP_LOG: $ERP_LOG
     PROMO_CODE_LINE_ITEM_SKU: $PROMO_CODE_LINE_ITEM_SKU
     PROMO_CODE_LINE_ITEM_NAME: $PROMO_CODE_LINE_ITEM_NAME
+    VERTEX_TAX_CLASS_MAPPING: $VERTEX_TAX_CLASS_MAPPING
   annotations:
     require-adobe-auth: false
     final: true

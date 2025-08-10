@@ -25,10 +25,7 @@ const stateLib = require('@adobe/aio-lib-state');
 async function main(params) {
   return {
     statusCode: HTTP_OK,
-      body: {
-        success: true,
-        message: JSON.stringify(params),
-      },
+      body: params
   };
   const logger = Core.Logger('main', { level: params.LOG_LEVEL || 'info' });
   try {
