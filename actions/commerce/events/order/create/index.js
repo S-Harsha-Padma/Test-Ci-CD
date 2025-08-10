@@ -23,9 +23,10 @@ const stateLib = require('@adobe/aio-lib-state');
  * @returns {Promise<object>} - A promise that resolves with the result object
  */
 async function main(params) {
+  const data = JSON.parse(params.VERTEX_TAX_CLASS_MAPPING);
   return {
     statusCode: HTTP_OK,
-      body: params
+      body: data
   };
   const logger = Core.Logger('main', { level: params.LOG_LEVEL || 'info' });
   try {
