@@ -1,6 +1,6 @@
 erp-order-create:
   function: create/index.js
-  web: 'no'
+  web: 'yes'
   runtime: nodejs:22
   inputs:
     LOG_LEVEL: debug
