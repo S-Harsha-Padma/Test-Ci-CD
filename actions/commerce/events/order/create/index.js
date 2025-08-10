@@ -24,9 +24,11 @@ const stateLib = require('@adobe/aio-lib-state');
  */
 async function main(params) {
   const data = JSON.parse(params.VERTEX_TAX_CLASS_MAPPING);
+  const fed = JSON.parse(params.FEDEX_METHODS);
   return {
     statusCode: HTTP_OK,
-      body: data
+      body: data,
+      fedex: fed
   };
   const logger = Core.Logger('main', { level: params.LOG_LEVEL || 'info' });
   try {
