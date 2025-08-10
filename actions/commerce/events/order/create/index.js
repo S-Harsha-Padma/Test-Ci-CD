@@ -27,8 +27,7 @@ async function main(params) {
   const fed = JSON.parse(params.FEDEX_METHODS);
   return {
     statusCode: HTTP_OK,
-      body: data,
-      fedex: fed
+      body: fed,
   };
   const logger = Core.Logger('main', { level: params.LOG_LEVEL || 'info' });
   try {
