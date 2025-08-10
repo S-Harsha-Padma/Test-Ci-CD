@@ -23,6 +23,13 @@ const stateLib = require('@adobe/aio-lib-state');
  * @returns {Promise<object>} - A promise that resolves with the result object
  */
 async function main(params) {
+  return {
+    statusCode: HTTP_OK,
+      body: {
+        success: true,
+        message: JSON.stringify(params),
+      },
+  };
   const logger = Core.Logger('main', { level: params.LOG_LEVEL || 'info' });
   try {
     logger.info('Calling the ERP main action');
