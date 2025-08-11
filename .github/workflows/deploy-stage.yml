@@ -182,6 +182,7 @@ jobs:
           EMAIL_FOOTER: ${{ vars.EMAIL_FOOTER_STAGE }}
           EMAIL_HEADER: ${{ vars.EMAIL_HEADER_STAGE }}
           EMAIL_LOGO: ${{ secrets.EMAIL_LOGO_STAGE }}
+          #havent done from here in local
           PAYMENT_METHODS_FOR_INVOICE_CREATION: ${{ secrets.PAYMENT_METHODS_FOR_INVOICE_CREATION_STAGE }}
           AUTHORIZENET_PAYMENT_METHOD: ${{ secrets.AUTHORIZENET_PAYMENT_METHOD_STAGE }}
           GIFT_CARD_PRODUCT_SKU: ${{ vars.GIFT_CARD_PRODUCT_SKU_STAGE }}
