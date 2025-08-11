@@ -32,7 +32,7 @@ async function main(params) {
     if (!params.CLIENT_ID || !params.CLIENT_SECRET || !params.SERVICE_DOMAIN) {
       return errorResponse(HTTP_BAD_REQUEST, 'Something went wrong. Client requires configuration.', logger);
     }
-
+return errorResponse(HTTP_BAD_REQUEST, 'Success.', logger);
     const state = await stateLib.init();
     const storedTokenData = await state.get('ups_token');
 
