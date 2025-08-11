@@ -59,7 +59,8 @@ async function main(params) {
   } catch (error) {
     return errorResponse(
       HTTP_INTERNAL_ERROR,
-      'There is a problem calling address validation api. Please try later.',
+      // 'There is a problem calling address validation api. Please try later.',
+      error.message,
       logger
     );
   }
