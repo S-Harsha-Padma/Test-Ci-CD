@@ -21,33 +21,33 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: ${{ matrix.node-version }}
-      - name: Cache node modules
-        id: cache-npm
-        uses: actions/cache@v4
-        env:
-          cache-name: cache-node-modules
-        with:
-          path: |
-            ~/.npm
-            node_modules
-          key: ${{ runner.os }}-${{ env.cache-name }}-stage-${{ hashFiles('**/package-lock.json') }}
-          restore-keys: |
-            ${{ runner.os }}-${{ env.cache-name }}-stage-
-            ${{ runner.os }}-${{ env.cache-name }}-
-      - name: Debug - Node Info
-        run: |
-          echo "Node version: $(node --version)"
-          echo "NPM version: $(npm --version)"
-      - if: ${{ steps.cache-npm.outputs.cache-hit != 'true' }}
-        name: Install Dependencies
-        run: |
-          npm ci --prefer-offline
-          npm list --depth=0
-      - name: Setup CLI
-        uses: adobe/aio-cli-setup-action@1.3.0
-        with:
-          os: ${{ matrix.os }}
-          version: 10.x.x
+      # - name: Cache node modules
+      #   id: cache-npm
+      #   uses: actions/cache@v4
+      #   env:
+      #     cache-name: cache-node-modules
+      #   with:
+      #     path: |
+      #       ~/.npm
+      #       node_modules
+      #     key: ${{ runner.os }}-${{ env.cache-name }}-stage-${{ hashFiles('**/package-lock.json') }}
+      #     restore-keys: |
+      #       ${{ runner.os }}-${{ env.cache-name }}-stage-
+      #       ${{ runner.os }}-${{ env.cache-name }}-
+      # - name: Debug - Node Info
+      #   run: |
+      #     echo "Node version: $(node --version)"
+      #     echo "NPM version: $(npm --version)"
+      # - if: ${{ steps.cache-npm.outputs.cache-hit != 'true' }}
+      #   name: Install Dependencies
+      #   run: |
+      #     npm ci --prefer-offline
+      #     npm list --depth=0
+      # - name: Setup CLI
+      #   uses: adobe/aio-cli-setup-action@1.3.0
+      #   with:
+      #     os: ${{ matrix.os }}
+      #     version: 10.x.x
       - name: Oauth Server to Server
         uses: adobe/aio-apps-action@3.3.0
         with:
@@ -59,21 +59,21 @@ jobs:
           TECHNICALACCOUNTEMAIL: ${{ secrets.TECHNICALACCEMAIL_STAGE }}
           IMSORGID: ${{ secrets.IMSORGID_STAGE }}
           SCOPES: ${{ secrets.SCOPES_STAGE }}
-      - name: Build
-        env:
-          # Deployment/Infrastructure secrets
-          AIO_RUNTIME_NAMESPACE: ${{ secrets.AIO_RUNTIME_NAMESPACE_STAGE }}
-        uses: adobe/aio-apps-action@3.3.0
-        with:
-          os: ${{ matrix.os }}
-          command: build
+      # - name: Build
+      #   env:
+      #     # Deployment/Infrastructure secrets
+      #     AIO_RUNTIME_NAMESPACE: ${{ secrets.AIO_RUNTIME_NAMESPACE_STAGE }}
+      #   uses: adobe/aio-apps-action@3.3.0
+      #   with:
+      #     os: ${{ matrix.os }}
+      #     command: build
       - name: Node check
         run: |
           node -e 'JSON.parse(process.env.OAUTH_SCOPES); JSON.parse(process.env.OAUTH_CLIENT_SECRETS); console.log("JSON ok")'
           node -e '(async()=>{console.log("Node ok")})().catch(e=>{console.error(e);process.exit(1)})'
         env:
-          OAUTH_SCOPES: ${{ secrets.OAUTH_SCOPES_STAGE }}
-          OAUTH_CLIENT_SECRETS: ${{ secrets.OAUTH_CLIENT_SECRETS_STAGE }}
+          OAUTH_SCOPES: ${{ vars.OAUTH_SCOPES_STAGE }}
+          OAUTH_CLIENT_SECRETS: ${{ vars.OAUTH_CLIENT_SECRETS_STAGE }}
       # - name: Deploy
         # env:
         #   AIO_RUNTIME_NAMESPACE: ${{ secrets.AIO_RUNTIME_NAMESPACE_STAGE }}
