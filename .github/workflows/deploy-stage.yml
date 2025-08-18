@@ -67,13 +67,12 @@ jobs:
       #   with:
       #     os: ${{ matrix.os }}
       #     command: build
-      - name: Node check
+      - name: Node check (vars)
         run: |
-          node -e 'JSON.parse(process.env.OAUTH_SCOPES); JSON.parse(process.env.OAUTH_CLIENT_SECRETS); console.log("JSON ok")'
-          node -e '(async()=>{console.log("Node ok")})().catch(e=>{console.error(e);process.exit(1)})'
+          node -e 'try{const s=JSON.parse(process.env.OAUTH_SCOPES);const c=JSON.parse(process.env.OAUTH_CLIENT_SECRETS);console.log("SCOPES:", s);console.log("CLIENT_SECRETS:", c);console.log("isArray:", Array.isArray(s), Array.isArray(c));console.log("lengths:", s.length, c.length);console.log("JSON ok");}catch(e){console.error("Parse error:", e.message);process.exit(1);}}'
         env:
-          OAUTH_SCOPES: ${{ vars.OAUTH_SCOPES_STAGE }}
-          OAUTH_CLIENT_SECRETS: ${{ vars.OAUTH_CLIENT_SECRETS_STAGE }}
+        OAUTH_SCOPES: ${{ vars.OAUTH_SCOPES_STAGE }}
+        OAUTH_CLIENT_SECRETS: ${{ vars.OAUTH_CLIENT_SECRETS_STAGE }}
       # - name: Deploy
         # env:
         #   AIO_RUNTIME_NAMESPACE: ${{ secrets.AIO_RUNTIME_NAMESPACE_STAGE }}
