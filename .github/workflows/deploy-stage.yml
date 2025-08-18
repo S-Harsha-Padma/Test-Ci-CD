@@ -68,22 +68,25 @@ jobs:
       #     os: ${{ matrix.os }}
       #     command: build
       - name: Node check (vars)
-        run: |
-          node -e 'try {
-          const s = JSON.parse(process.env.OAUTH_SCOPES || "[]");
-          const c = JSON.parse(process.env.OAUTH_CLIENT_SECRETS || "[]");
-          console.log("SCOPES:", s);
-          console.log("CLIENT_SECRETS:", c);
-          console.log("isArray:", Array.isArray(s), Array.isArray(c));
-          console.log("lengths:", s.length, c.length);
-          console.log("JSON ok");
-        } catch (e) {
-          console.error("Parse error:", e.message, "\nRaw OAUTH_SCOPES:", process.env.OAUTH_SCOPES, "\nRaw OAUTH_CLIENT_SECRETS:", process.env.OAUTH_CLIENT_SECRETS);
-          process.exit(1);
-        }'
+        shell: bash
         env:
           OAUTH_SCOPES: ${{ vars.OAUTH_SCOPES_STAGE }}
           OAUTH_CLIENT_SECRETS: ${{ vars.OAUTH_CLIENT_SECRETS_STAGE }}
+        run: |
+          node <<'NODE'
+          try {
+            const s = JSON.parse(process.env.OAUTH_SCOPES || "[]");
+            const c = JSON.parse(process.env.OAUTH_CLIENT_SECRETS || "[]");
+            console.log("SCOPES:", s);
+            console.log("CLIENT_SECRETS:", c);
+            console.log("isArray:", Array.isArray(s), Array.isArray(c));
+            console.log("lengths:", s.length, c.length);
+            console.log("JSON ok");
+          } catch (e) {
+            console.error("Parse error:", e.message, "\nRaw OAUTH_SCOPES:", process.env.OAUTH_SCOPES, "\nRaw OAUTH_CLIENT_SECRETS:", process.env.OAUTH_CLIENT_SECRETS);
+            process.exit(1);
+          }
+          NODE
       # - name: Deploy
         # env:
         #   AIO_RUNTIME_NAMESPACE: ${{ secrets.AIO_RUNTIME_NAMESPACE_STAGE }}
