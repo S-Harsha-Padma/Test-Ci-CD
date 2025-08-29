@@ -79,14 +79,14 @@ jobs:
           npm run create-payment-methods
         env:
           # Use existing _STAGE/_PROD suffixed secrets
-          OAUTH_CLIENT_ID: secrets.CLIENTID_STAGE
-          OAUTH_CLIENT_SECRETS: vars.OAUTH_CLIENT_SECRETS_STAGE
-          OAUTH_TECHNICAL_ACCOUNT_ID: secrets.TECHNICALACCID_STAGE
-          OAUTH_TECHNICAL_ACCOUNT_EMAIL: secrets.TECHNICALACCEMAIL_STAGE
-          OAUTH_IMS_ORG_ID: secrets.AIO_PROJECT_IMS_ORG_ID_STAGE
-          OAUTH_SCOPES: vars.OAUTH_SCOPES_STAGE
+          OAUTH_CLIENT_ID: ${{ secrets.CLIENTID_STAGE }}
+          OAUTH_CLIENT_SECRETS: ${{ vars.OAUTH_CLIENT_SECRETS_STAGE }}
+          OAUTH_TECHNICAL_ACCOUNT_ID: ${{ secrets.TECHNICALACCID_STAGE }}
+          OAUTH_TECHNICAL_ACCOUNT_EMAIL: ${{ secrets.TECHNICALACCEMAIL_STAGE }}
+          OAUTH_IMS_ORG_ID: ${{ secrets.AIO_PROJECT_IMS_ORG_ID_STAGE }}
+          OAUTH_SCOPES: ${{ vars.OAUTH_SCOPES_STAGE }}
           AIO_CLI_ENV: 'prod'
-          COMMERCE_BASE_URL: secrets.COMMERCE_BASE_URL_STAGE
+          COMMERCE_BASE_URL: ${{ secrets.COMMERCE_BASE_URL_STAGE }}
       # - name: Build
       #   env:
       #     # Deployment/Infrastructure secrets
