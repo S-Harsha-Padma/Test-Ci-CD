@@ -19,6 +19,7 @@ jobs:
   run-scripts:
     name: Run Configuration Scripts
     runs-on: ubuntu-latest
+    environment: ${{ github.event_name == 'workflow_dispatch' && inputs.environment || 'stage' }}
     strategy:
       matrix:
         node-version: ['22']
@@ -55,7 +56,16 @@ jobs:
         run: |
           npm run create-shipping-carriers
           npm run create-payment-methods
-
+        env:
+          # Use existing _STAGE/_PROD suffixed secrets
+          OAUTH_CLIENT_ID: ${{ (github.event_name == 'workflow_dispatch' && inputs.environment == 'prod') && secrets.OAUTH_CLIENT_ID_PROD || secrets.CLIENTID_STAGE }}
+          OAUTH_CLIENT_SECRETS: ${{ (github.event_name == 'workflow_dispatch' && inputs.environment == 'prod') && secrets.OAUTH_CLIENT_SECRETS_PROD || secrets.CLIENTSECRET_STAGE }}
+          OAUTH_TECHNICAL_ACCOUNT_ID: ${{ (github.event_name == 'workflow_dispatch' && inputs.environment == 'prod') && secrets.OAUTH_TECHNICAL_ACCOUNT_ID_PROD || secrets.TECHNICALACCID_STAGE }}
+          OAUTH_TECHNICAL_ACCOUNT_EMAIL: ${{ (github.event_name == 'workflow_dispatch' && inputs.environment == 'prod') && secrets.OAUTH_TECHNICAL_ACCOUNT_EMAIL_PROD || secrets.TECHNICALACCEMAIL_STAGE }}
+          OAUTH_IMS_ORG_ID: ${{ (github.event_name == 'workflow_dispatch' && inputs.environment == 'prod') && secrets.OAUTH_IMS_ORG_ID_PROD || secrets.AIO_PROJECT_IMS_ORG_ID_STAGE }}
+          OAUTH_SCOPES: ${{ (github.event_name == 'workflow_dispatch' && inputs.environment == 'prod') && secrets.OAUTH_SCOPES_PROD || secrets.OAUTH_SCOPES_STAGE }}
+          AIO_CLI_ENV: ${{ (github.event_name == 'workflow_dispatch' && inputs.environment == 'prod') && vars.AIO_CLI_ENV_PROD || 'prod' }}
+          COMMERCE_BASE_URL: ${{ (github.event_name == 'workflow_dispatch' && inputs.environment == 'prod') && secrets.COMMERCE_BASE_URL_PROD || secrets.COMMERCE_BASE_URL_STAGE }}
   deploy:
     name: Trigger Deployment
     needs: run-scripts
