@@ -1,0 +1,220 @@
+name: AppBuilder Test Deployment
+
+on:
+  push:
+    branches:
+      - prod
+jobs:
+  deploy:
+    name: Deploy to PROD Instance
+    environment: prod
+    runs-on: ${{ matrix.os }}
+    strategy:
+      max-parallel: 1
+      matrix:
+        node-version: ['22']
+        os: [ubuntu-latest]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+      # - name: Cache node modules
+      #   id: cache-npm
+      #   uses: actions/cache@v4
+      #   env:
+      #     cache-name: cache-node-modules
+      #   with:
+      #     path: |
+      #       ~/.npm
+      #       node_modules
+      #     key: ${{ runner.os }}-${{ env.cache-name }}-stage-${{ hashFiles('**/package-lock.json') }}
+      #     restore-keys: |
+      #       ${{ runner.os }}-${{ env.cache-name }}-stage-
+      #       ${{ runner.os }}-${{ env.cache-name }}-
+      # - name: Debug - Node Info
+      #   run: |
+      #     echo "Node version: $(node --version)"
+      #     echo "NPM version: $(npm --version)"
+      # - if: ${{ steps.cache-npm.outputs.cache-hit != 'true' }}
+      #   name: Install Dependencies
+      #   run: |
+      #     npm ci --prefer-offline
+      #     npm list --depth=0
+      # - name: Setup CLI
+      #   uses: adobe/aio-cli-setup-action@1.3.0
+      #   with:
+      #     os: ${{ matrix.os }}
+      #     version: 10.x.x
+      - name: Oauth Server to Server
+        uses: adobe/aio-apps-action@3.3.0
+        with:
+          os: ${{ matrix.os }}
+          command: oauth_sts
+          CLIENTID: ${{ secrets.CLIENTID_STAGE }}
+          CLIENTSECRET: ${{ secrets.CLIENTSECRET_STAGE }}
+          TECHNICALACCOUNTID: ${{ secrets.TECHNICALACCID_STAGE }}
+          TECHNICALACCOUNTEMAIL: ${{ secrets.TECHNICALACCEMAIL_STAGE }}
+          IMSORGID: ${{ secrets.IMSORGID_STAGE }}
+          SCOPES: ${{ secrets.SCOPES_STAGE }}
+      # - name: Build
+      #   env:
+      #     # Deployment/Infrastructure secrets
+      #     AIO_RUNTIME_NAMESPACE: ${{ secrets.AIO_RUNTIME_NAMESPACE_STAGE }}
+      #   uses: adobe/aio-apps-action@3.3.0
+      #   with:
+      #     os: ${{ matrix.os }}
+      #     command: build
+      # - name: Node check (vars)
+      #   shell: bash
+      #   env:
+      #     OAUTH_SCOPES: ${{ vars.OAUTH_SCOPES_STAGE }}
+      #     OAUTH_CLIENT_SECRETS: ${{ vars.OAUTH_CLIENT_SECRETS_STAGE }}
+      #   run: |
+      #     node <<'NODE'
+      #     try {
+      #       const s = JSON.parse(process.env.OAUTH_SCOPES || "[]");
+      #       const c = JSON.parse(process.env.OAUTH_CLIENT_SECRETS || "[]");
+      #       console.log("SCOPES:", s);
+      #       console.log("CLIENT_SECRETS:", c);
+      #       console.log("isArray:", Array.isArray(s), Array.isArray(c));
+      #       console.log("lengths:", s.length, c.length);
+      #       console.log("JSON ok");
+      #     } catch (e) {
+      #       console.error("Parse error:", e.message, "\nRaw OAUTH_SCOPES:", process.env.OAUTH_SCOPES, "\nRaw OAUTH_CLIENT_SECRETS:", process.env.OAUTH_CLIENT_SECRETS);
+      #       process.exit(1);
+      #     }
+      #     NODE
+      # - name: Deploy
+        # env:
+        #   AIO_RUNTIME_NAMESPACE: ${{ secrets.AIO_RUNTIME_NAMESPACE_STAGE }}
+        #   AIO_RUNTIME_AUTH: ${{ secrets.AIO_RUNTIME_AUTH_STAGE }}
+        #   AIO_PROJECT_ID: ${{ secrets.AIO_PROJECT_ID_STAGE }}
+        #   AIO_PROJECT_NAME: ${{ secrets.AIO_PROJECT_NAME_STAGE }}
+        #   AIO_PROJECT_ORG_ID: ${{ secrets.AIO_PROJECT_ORG_ID_STAGE }}
+        #   AIO_PROJECT_WORKSPACE_ID: ${{ secrets.AIO_PROJECT_WORKSPACE_ID_STAGE }}
+        #   AIO_PROJECT_WORKSPACE_NAME: ${{ secrets.AIO_PROJECT_WORKSPACE_NAME_STAGE }}
+        #   AIO_PROJECT_WORKSPACE_DETAILS_SERVICES: ${{ secrets.AIO_PROJECT_WORKSPACE_DETAILS_SERVICES_STAGE }}
+        #   AIO_PROJECT_ORG_IMS__ORG__ID: ${{ secrets.IMSORGID_STAGE }}
+        #   # SERVICE_API_KEY: a2441fcbc4c04670938dd934ef29288b
+        #   COMMERCE_BASE_URL: ${{ secrets.COMMERCE_BASE_URL_STAGE }}
+        #   # Commerce vertex tax calculation settings
+        #   VERTEX_SERVICE_URL: ${{ secrets.VERTEX_SERVICE_URL_STAGE }}
+        #   VERTEX_TRUST_ID: ${{ secrets.VERTEX_TRUST_ID_STAGE }}
+        #   SELLER_COMPANY: ${{ vars.SELLER_COMPANY_STAGE }}
+        #   SELLER_STREET: ${{ secrets.SELLER_STREET_STAGE }}
+        #   SELLER_CITY: ${{ secrets.SELLER_CITY_STAGE }}
+        #   SELLER_DIVISION: ${{ secrets.SELLER_DIVISION_STAGE }}
+        #   SELLER_POSTAL_CODE: ${{ secrets.SELLER_POSTAL_CODE_STAGE }}
+        #   SELLER_COUNTRY: ${{ vars.SELLER_COUNTRY_STAGE }}
+        #   VERTEX_TAX_CLASS_MAPPING: ${{ secrets.VERTEX_TAX_CLASS_MAPPING_STAGE }}
+        #   # Commerce ups address validation settings
+        #   UPS_SERVICE_DOMAIN: ${{ secrets.UPS_SERVICE_DOMAIN_STAGE }}
+        #   UPS_CLIENT_ID: ${{ secrets.UPS_CLIENT_ID_STAGE }}
+        #   UPS_CLIENT_SECRET: ${{ secrets.UPS_CLIENT_SECRET_STAGE }}
+        #   ZONOS_API_KEY: ${{ secrets.ZONOS_API_KEY_STAGE }}
+        #   ZONOS_API_URL: ${{ secrets.ZONOS_API_URL_STAGE }}
+        #   ZONOS_SHIPPING_METHODS: ${{ secrets.ZONOS_SHIPPING_METHODS_STAGE }}
+        #   TAX_EXEMPT_CLASSES: ${{ secrets.TAX_EXEMPT_CLASSES_STAGE }}
+        #   # SSO login Configuration
+        #   COMMERCE_GRAPHQL_BASE_URL: ${{ secrets.COMMERCE_GRAPHQL_BASE_URL_STAGE }}
+        #   CREATE_CUSTOMER_PASSWORD: ${{ secrets.CREATE_CUSTOMER_PASSWORD_STAGE }}
+        #   CUSTOMER_GROUP_ID: ${{ secrets.CUSTOMER_GROUP_ID_STAGE }}
+        #   SSO_USERINFO_URL: ${{ secrets.SSO_USERINFO_URL_STAGE }}
+        #   # HALO Erp Configuration
+        #   SENDER_IDENTITY: ${{ secrets.SENDER_IDENTITY_STAGE }}
+        #   SENDER_SHARED_SECRET: ${{ secrets.SENDER_SHARED_SECRET_STAGE }}
+        #   SENDER_USER_AGENT: ${{ secrets.SENDER_USER_AGENT_STAGE }}
+        #   DEPLOYMENT_MODE: ${{ vars.DEPLOYMENT_MODE_STAGE }}
+        #   PAYMENT_TERM: ${{ secrets.PAYMENT_TERM_STAGE }}
+        #   ERP_ENDPOINT: ${{ secrets.ERP_ENDPOINT_STAGE }}
+        #   UNIT_OF_MEASURE: ${{ vars.UNIT_OF_MEASURE_STAGE }}
+        #   ERP_ORDER_STATUS_ENDPOINT: ${{ secrets.ERP_ORDER_STATUS_ENDPOINT_STAGE }}
+        #   ERP_AUTH_TOKEN: ${{ secrets.ERP_AUTH_TOKEN_STAGE }}
+        #   PAGE_SIZE: ${{ secrets.PAGE_SIZE_STAGE }}
+        #   # Courier Shipping method
+        #   CARRIER_CODE: ${{ secrets.CARRIER_CODE_STAGE }}
+        #   SHIPPING_METHOD_CODE: ${{ secrets.SHIPPING_METHOD_CODE_STAGE }}
+        #   SHIPPING_METHOD_TITLE: ${{ secrets.SHIPPING_METHOD_TITLE_STAGE }}
+        #   CUSTOMER_GROUP_CODE: ${{ secrets.CUSTOMER_GROUP_CODE_STAGE }}
+        #   # Warehouse Pickup method
+        #   WAREHOUSE_PICKUP_CARRIER_CODE: ${{ secrets.WAREHOUSE_PICKUP_CARRIER_CODE_STAGE }}
+        #   WAREHOUSE_PICKUP_METHOD_CODE: ${{ secrets.WAREHOUSE_PICKUP_METHOD_CODE_STAGE }}
+        #   WAREHOUSE_PICKUP_METHOD_TITLE: ${{ secrets.WAREHOUSE_PICKUP_METHOD_TITLE_STAGE }}
+        #   ORDER_TIME_ZONE: ${{ secrets.ORDER_TIME_ZONE_STAGE }}
+        #   ERP_ORDER_STATUS: ${{ secrets.ERP_ORDER_STATUS_STAGE }}
+        #   ORDER_ID_PREFIX: ${{ secrets.ORDER_ID_PREFIX_STAGE }}
+        #   # Authorize.net configurations
+        #   TRANSACTION_KEY: ${{ secrets.TRANSACTION_KEY_STAGE }}
+        #   API_LOGIN_ID: ${{ secrets.API_LOGIN_ID_STAGE }}
+        #   TRANSACTION_ENVIRONMENT: ${{ secrets.TRANSACTION_ENVIRONMENT_STAGE }}
+        #   # UPS_CLIENT
+        #   UPS_NAME: ${{ secrets.UPS_NAME_STAGE }}
+        #   UPS_CARRIER_CODE: ${{ secrets.UPS_CARRIER_CODE_STAGE }}
+        #   UPS_RATE_ENDPOINT: ${{ secrets.UPS_RATE_ENDPOINT_STAGE }}
+        #   UPS_STATE_CODE: ${{ secrets.UPS_STATE_CODE_STAGE }}
+        #   UPS_POSTAL_CODE: ${{ secrets.UPS_POSTAL_CODE_STAGE }}
+        #   UPS_COUNTRY_CODE: ${{ secrets.UPS_COUNTRY_CODE_STAGE }}
+        #   UPS_DIMENSIONS_UNIT_OF_MEASUREMENT_CODE: ${{ vars.UPS_DIMENSIONS_UNIT_OF_MEASUREMENT_CODE_STAGE }}
+        #   UPS_DIMENSIONS_UNIT_OF_MEASUREMENT_DESCRIPTION: ${{ vars.UPS_DIMENSIONS_UNIT_OF_MEASUREMENT_DESCRIPTION_STAGE }}
+        #   UPS_PACKAGE_UNIT_OF_MEASUREMENT: ${{ vars.UPS_PACKAGE_UNIT_OF_MEASUREMENT_STAGE }}
+        #   UPS_DOMESTIC_PAY_PERCENTAGE: ${{ secrets.UPS_DOMESTIC_PAY_PERCENTAGE_STAGE }}
+        #   UPS_INTERNATIONAL_PAY_PERCENTAGE: ${{ secrets.UPS_INTERNATIONAL_PAY_PERCENTAGE_STAGE }}
+        #   PO_ELIGIBLE_CUSTOMER_GROUP: ${{ secrets.PO_ELIGIBLE_CUSTOMER_GROUP_STAGE }}
+        #   FEDEX_SHIPPING_PRODUCT_SKU: ${{ secrets.FEDEX_SHIPPING_PRODUCT_SKU_STAGE }}
+        #   FEDEX_SHIPPING_PRODUCT_ID: ${{ secrets.FEDEX_SHIPPING_PRODUCT_ID_STAGE }}
+        #   FEDEX_SHIPPING_PRODUCT_PRICE: ${{ secrets.FEDEX_SHIPPING_PRODUCT_PRICE_STAGE }}
+        #   FEDEX_SHIPPING_PRODUCT_NAME: ${{ secrets.FEDEX_SHIPPING_PRODUCT_NAME_STAGE }}
+        #   PO_FEDEX_CUSTOMER_GROUP: ${{ secrets.PO_FEDEX_CUSTOMER_GROUP_STAGE }}
+        #   FEDEX_CODE: ${{ secrets.FEDEX_CODE_STAGE }}
+        #   FEDEX_METHODS: ${{ secrets.FEDEX_METHODS_STAGE }}
+        #   SFTP_USERNAME: ${{ secrets.SFTP_USERNAME_STAGE }}
+        #   SFTP_PASSWORD: ${{ secrets.SFTP_PASSWORD_STAGE }}
+        #   SFTP_HOST: ${{ secrets.SFTP_HOST_STAGE }}
+        #   SFTP_REMOTE_DIR: ${{ secrets.SFTP_REMOTE_DIR_STAGE }}
+        #   FILE_NAME: ${{ secrets.FILE_NAME_STAGE }}
+        #   GW_INLINE_PRODUCT_SKU: ${{ secrets.GW_INLINE_PRODUCT_SKU_STAGE }}
+        #   GW_INLINE_PRODUCT_NAME: ${{ vars.GW_INLINE_PRODUCT_NAME_STAGE }}
+        #   GW_INLINE_PRODUCT_ID: ${{ secrets.GW_INLINE_PRODUCT_ID_STAGE }}
+        #   GW_INLINE_PRODUCT_PRICE: ${{ secrets.GW_INLINE_PRODUCT_PRICE_STAGE }}
+        #   GW_INLINE_PRODUCT_QUANTITY: ${{ secrets.GW_INLINE_PRODUCT_QUANTITY_STAGE }}
+        #   GW_INLINE_BUNDLE_PRODUCT_SKU: ${{ secrets.GW_INLINE_BUNDLE_PRODUCT_SKU_STAGE }}
+        #   GW_INLINE_BUNDLE_PRODUCT_NAME: ${{ vars.GW_INLINE_BUNDLE_PRODUCT_NAME_STAGE }}
+        #   GW_INLINE_BUNDLE_PRODUCT_ID: ${{ secrets.GW_INLINE_BUNDLE_PRODUCT_ID_STAGE }}
+        #   GW_INLINE_BUNDLE_PRODUCT_PRICE: ${{ secrets.GW_INLINE_BUNDLE_PRODUCT_PRICE_STAGE }}
+        #   GW_INLINE_GIFT_NOTE_PRODUCT_SKU: ${{ secrets.GW_INLINE_GIFT_NOTE_PRODUCT_SKU_STAGE }} 
+        #   GW_INLINE_GIFT_NOTE_PRODUCT_NAME: ${{ vars.GW_INLINE_GIFT_NOTE_PRODUCT_NAME_STAGE }}
+        #   GW_INLINE_GIFT_NOTE_PRODUCT_ID: ${{ secrets.GW_INLINE_GIFT_NOTE_PRODUCT_ID_STAGE }}
+        #   GW_INLINE_GIFT_NOTE_PRODUCT_PRICE: ${{ secrets.GW_INLINE_GIFT_NOTE_PRODUCT_PRICE_STAGE }}
+        #   FEDEX_INTERNATIONAL_SHIPPING_PRODUCT_SKU: ${{ secrets.FEDEX_INTERNATIONAL_SHIPPING_PRODUCT_SKU_STAGE }}
+        #   FEDEX_INTERNATIONAL_SHIPPING_PRODUCT_NAME: ${{ secrets.FEDEX_INTERNATIONAL_SHIPPING_PRODUCT_NAME_STAGE }}
+        #   FEDEX_INTERNATIONAL_SHIPPING_PRODUCT_ID: ${{ secrets.FEDEX_INTERNATIONAL_SHIPPING_PRODUCT_ID_STAGE }}
+        #   FEDEX_INTERNATIONAL_SHIPPING_PRODUCT_PRICE: ${{ secrets.FEDEX_INTERNATIONAL_SHIPPING_PRODUCT_PRICE_STAGE }}
+        #   EMAIL_HOST: ${{ secrets.EMAIL_HOST_STAGE }}
+        #   EMAIL_PORT: ${{ vars.EMAIL_PORT_STAGE }}
+        #   EMAIL_USER: ${{ secrets.EMAIL_USER_STAGE }}
+        #   EMAIL_PASSWORD: ${{ secrets.EMAIL_PASSWORD_STAGE }}
+        #   EMAIL_FROM: ${{ secrets.EMAIL_FROM_STAGE }}
+        #   EMAIL_TO: 
+        #   EMAIL_SUBJECT: ${{ vars.EMAIL_SUBJECT_STAGE }}
+        #   EMAIL_FOOTER: ${{ vars.EMAIL_FOOTER_STAGE }}
+        #   EMAIL_HEADER: ${{ vars.EMAIL_HEADER_STAGE }}
+        #   EMAIL_LOGO: ${{ secrets.EMAIL_LOGO_STAGE }}
+        #   #havent done from here in local
+        #   PAYMENT_METHODS_FOR_INVOICE_CREATION: ${{ secrets.PAYMENT_METHODS_FOR_INVOICE_CREATION_STAGE }}
+        #   AUTHORIZENET_PAYMENT_METHOD: ${{ secrets.AUTHORIZENET_PAYMENT_METHOD_STAGE }}
+        #   GIFT_CARD_PRODUCT_SKU: ${{ vars.GIFT_CARD_PRODUCT_SKU_STAGE }}
+        #   GIFT_CARD_PRODUCT_NAME: ${{ vars.GIFT_CARD_PRODUCT_NAME_STAGE }}
+        #   ERP_LOG: true
+        #   PROMO_CODE_LINE_ITEM_SKU: ${{ secrets.PROMO_CODE_LINE_ITEM_SKU_STAGE }}
+        #   PROMO_CODE_LINE_ITEM_NAME: ${{ vars.PROMO_CODE_LINE_ITEM_NAME_STAGE }}
+        #   SP_UPS_NAME: ${{ vars.SP_UPS_NAME_STAGE}}
+        #   SP_UPS_RATE_ENDPOINT: ${{ secrets.SP_UPS_RATE_ENDPOINT_STAGE }}
+        #   COMMERCE_WEBHOOKS_PUBLIC_KEY: ${{ secrets.COMMERCE_WEBHOOKS_PUBLIC_KEY_STAGE }}
+        # uses: adobe/aio-apps-action@3.3.0
+        # with:
+        #   os: ${{ matrix.os }}
+        #   command: deploy
+        #   noPublish: true
