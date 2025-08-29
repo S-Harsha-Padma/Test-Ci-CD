@@ -1,10 +1,13 @@
 name: AppBuilder Test Deployment
 
 on:
-  workflow_run:
-    workflows: [Run Scripts and Deploy]
-    types:
-      - completed
+  push:
+    branches:
+      - stage
+  # workflow_run:
+  #   workflows: [Run Scripts and Deploy]
+  #   types:
+  #     - completed
 jobs:
   deploy:
     name: Deploy to Instance
@@ -22,6 +25,20 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: ${{ matrix.node-version }}
+      - name: Run Scripts
+        run: |
+          npm run create-shipping-carriers
+          npm run create-payment-methods
+        env:
+          # Use existing _STAGE/_PROD suffixed secrets
+          OAUTH_CLIENT_ID: secrets.CLIENTID_STAGE
+          OAUTH_CLIENT_SECRETS: secrets.OAUTH_CLIENT_SECRETS_STAGE
+          OAUTH_TECHNICAL_ACCOUNT_ID: secrets.TECHNICALACCID_STAGE
+          OAUTH_TECHNICAL_ACCOUNT_EMAIL: secrets.TECHNICALACCEMAIL_STAGE
+          OAUTH_IMS_ORG_ID: secrets.AIO_PROJECT_IMS_ORG_ID_STAGE
+          OAUTH_SCOPES: secrets.OAUTH_SCOPES_STAGE
+          AIO_CLI_ENV: 'prod'
+          COMMERCE_BASE_URL: secrets.COMMERCE_BASE_URL_STAGE
       # - name: Cache node modules
       #   id: cache-npm
       #   uses: actions/cache@v4
