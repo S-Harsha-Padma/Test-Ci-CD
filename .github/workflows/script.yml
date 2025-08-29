@@ -59,7 +59,7 @@ jobs:
         env:
           # Use existing _STAGE/_PROD suffixed secrets
           OAUTH_CLIENT_ID: ${{ (github.event_name == 'workflow_dispatch' && inputs.environment == 'prod') && secrets.OAUTH_CLIENT_ID_PROD || secrets.CLIENTID_STAGE }}
-          OAUTH_CLIENT_SECRETS: ${{ (github.event_name == 'workflow_dispatch' && inputs.environment == 'prod') && secrets.OAUTH_CLIENT_SECRETS_PROD || secrets.CLIENTSECRET_STAGE }}
+          OAUTH_CLIENT_SECRETS: ${{ (github.event_name == 'workflow_dispatch' && inputs.environment == 'prod') && secrets.OAUTH_CLIENT_SECRETS_PROD || secrets.OAUTH_CLIENT_SECRETS_STAGE }}
           OAUTH_TECHNICAL_ACCOUNT_ID: ${{ (github.event_name == 'workflow_dispatch' && inputs.environment == 'prod') && secrets.OAUTH_TECHNICAL_ACCOUNT_ID_PROD || secrets.TECHNICALACCID_STAGE }}
           OAUTH_TECHNICAL_ACCOUNT_EMAIL: ${{ (github.event_name == 'workflow_dispatch' && inputs.environment == 'prod') && secrets.OAUTH_TECHNICAL_ACCOUNT_EMAIL_PROD || secrets.TECHNICALACCEMAIL_STAGE }}
           OAUTH_IMS_ORG_ID: ${{ (github.event_name == 'workflow_dispatch' && inputs.environment == 'prod') && secrets.OAUTH_IMS_ORG_ID_PROD || secrets.AIO_PROJECT_IMS_ORG_ID_STAGE }}
