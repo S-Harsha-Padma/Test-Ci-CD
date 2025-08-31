@@ -73,12 +73,23 @@ jobs:
           TECHNICALACCOUNTEMAIL: ${{ secrets.TECHNICALACCEMAIL_STAGE }}
           IMSORGID: ${{ secrets.IMSORGID_STAGE }}
           SCOPES: ${{ secrets.SCOPES_STAGE }}
-      - name: Run Scripts
+      - name: Cache run scripts results
+        id: cache-scripts
+        uses: actions/cache@v4
+        env:
+          cache-name: cache-run-scripts
+        with:
+          path: |
+            .scripts-cache
+          key: ${{ runner.os }}-${{ env.cache-name }}-run-scripts-stage-
+          restore-keys: |
+            ${{ runner.os }}-${{ env.cache-name }}-run-scripts-stage-
+      - if: ${{ steps.cache-run-scripts.outputs.cache-hit != 'true' }}
+        name: Run Scripts if not cached
         run: |
           npm run create-shipping-carriers
           npm run create-payment-methods
         env:
-          # Use existing _STAGE/_PROD suffixed secrets
           OAUTH_CLIENT_ID: ${{ secrets.CLIENTID_STAGE }}
           OAUTH_CLIENT_SECRETS: ${{ secrets.OAUTH_CLIENT_SECRETS_STAGE }}
           OAUTH_TECHNICAL_ACCOUNT_ID: ${{ secrets.TECHNICALACCID_STAGE }}
