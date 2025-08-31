@@ -3,7 +3,7 @@ name: Run Scripts and Deploy
 on:
   push:
     branches:
-      - stage
+      - stage2
   workflow_dispatch:
     inputs:
       environment:
@@ -32,30 +32,52 @@ jobs:
         with:
           node-version: ${{ matrix.node-version }}
       
-      - name: Cache node modules
-        id: cache-npm
-        uses: actions/cache@v4
-        env:
-          cache-name: cache-node-modules
-        with:
-          path: |
-            ~/.npm
-            node_modules
-          key: ${{ runner.os }}-${{ env.cache-name }}-scripts-${{ hashFiles('**/package-lock.json') }}
-          restore-keys: |
-            ${{ runner.os }}-${{ env.cache-name }}-scripts-
-            ${{ runner.os }}-${{ env.cache-name }}-
+      # - name: Cache node modules
+      #   id: cache-npm
+      #   uses: actions/cache@v4
+      #   env:
+      #     cache-name: cache-node-modules
+      #   with:
+      #     path: |
+      #       ~/.npm
+      #       node_modules
+      #     key: ${{ runner.os }}-${{ env.cache-name }}-scripts-${{ hashFiles('**/package-lock.json') }}
+      #     restore-keys: |
+      #       ${{ runner.os }}-${{ env.cache-name }}-scripts-
+      #       ${{ runner.os }}-${{ env.cache-name }}-
       
-      - name: Install Dependencies
-        if: ${{ steps.cache-npm.outputs.cache-hit != 'true' }}
+      # - name: Cache run scripts results
+      #   id: cache-scripts
+      #   uses: actions/cache@v4
+      #   env:
+      #     cache-name: cache-run-scripts
+      #   with:
+      #     path: |
+      #       .scripts-cache
+      #     key: ${{ runner.os }}-${{ env.cache-name }}-${{ (github.event_name == 'workflow_dispatch' && inputs.environment == 'prod') && 'prod' || 'stage' }}-${{ hashFiles('scripts/**', 'package-lock.json') }}
+      #     restore-keys: |
+      #       ${{ runner.os }}-${{ env.cache-name }}-${{ (github.event_name == 'workflow_dispatch' && inputs.environment == 'prod') && 'prod' || 'stage' }}-
+      
+      # - name: Install Dependencies
+      #   if: ${{ steps.cache-npm.outputs.cache-hit != 'true' }}
+      #   run: |
+      #     npm ci --prefer-offline
+      #     npm list --depth=0
+      
+      - name: Skip Scripts (Cache Hit)
+        if: ${{ steps.cache-scripts.outputs.cache-hit == 'true' }}
         run: |
-          npm ci --prefer-offline
-          npm list --depth=0
+          echo "Scripts already completed - skipping due to cache hit"
+          cat .scripts-cache/completed.txt || echo "Cache marker found"
       
       - name: Run Scripts
+        if: ${{ steps.cache-scripts.outputs.cache-hit != 'true' }}
         run: |
           npm run create-shipping-carriers
           npm run create-payment-methods
+          # Create cache marker file
+          mkdir -p .scripts-cache
+          echo "Scripts completed at $(date)" > .scripts-cache/completed.txt
         env:
           # Use existing _STAGE/_PROD suffixed secrets
           OAUTH_CLIENT_ID: ${{ (github.event_name == 'workflow_dispatch' && inputs.environment == 'prod') && secrets.OAUTH_CLIENT_ID_PROD || secrets.CLIENTID_STAGE }}
