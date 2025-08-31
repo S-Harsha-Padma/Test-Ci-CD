@@ -20,7 +20,6 @@ jobs:
   run-scripts:
     name: Run Configuration Scripts
     runs-on: ubuntu-latest
-    environment: ${{ github.event_name == 'workflow_dispatch' && inputs.environment || github.ref_name }}
     strategy:
       matrix:
         node-version: ['22']
