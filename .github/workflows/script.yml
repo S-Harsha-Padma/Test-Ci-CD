@@ -3,8 +3,8 @@ name: Run Scripts and Trigger Deployment
 on:
   push:
     branches:
-      - stage
-      - prod
+      - stage2
+      # - prod
   workflow_dispatch:
     inputs:
       environment:
