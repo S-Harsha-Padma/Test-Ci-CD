@@ -28,6 +28,13 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
       
+      - name: Echo Environment
+        run: |
+          echo "Environment being used: ${{ github.event_name == 'workflow_dispatch' && inputs.environment || github.ref_name }}"
+          echo "Event name: ${{ github.event_name }}"
+          echo "Branch name: ${{ github.ref_name }}"
+          echo "Manual environment input: ${{ inputs.environment || 'N/A' }}"
+      
       - name: Use Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v4
         with:
@@ -37,12 +44,13 @@ jobs:
         uses: actions/cache@v4
         env:
           cache-name: cache-run-scripts
+          environment: ${{ github.event_name == 'workflow_dispatch' && inputs.environment || github.ref_name }}
         with:
           path: |
             .scripts-cache
-          key: ${{ runner.os }}-${{ env.cache-name }}-${{ github.ref_name }}-${{ hashFiles('scripts/**') }}
+          key: ${{ runner.os }}-${{ env.cache-name }}-${{ env.environment }}-${{ hashFiles('scripts/**') }}
           restore-keys: |
-            ${{ runner.os }}-${{ env.cache-name }}-${{ github.ref_name }}-
+            ${{ runner.os }}-${{ env.cache-name }}-${{ env.environment }}-
       - name: Skip Scripts (Cache Hit)
         if: ${{ steps.cache-scripts.outputs.cache-hit == 'true' }}
         run: |
@@ -56,7 +64,6 @@ jobs:
           npm run create-payment-methods
           # Create cache marker file
           mkdir -p .scripts-cache
-          echo "branch: ${github.ref_name}" > .scripts-cache/completed.txt
           echo "Scripts completed at $(date)" > .scripts-cache/completed.txt
         env:
           # Use branch-based or manual environment selection for credentials
