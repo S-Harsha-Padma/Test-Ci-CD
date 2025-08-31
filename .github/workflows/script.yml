@@ -124,7 +124,7 @@ jobs:
     needs: run-scripts
     runs-on: ubuntu-latest
     if: ${{ github.ref_name == 'prod' || (github.event_name == 'workflow_dispatch' && inputs.environment == 'prod') }}
-    environment: prod
+    # environment: prod
     permissions:
       actions: write
       contents: read
