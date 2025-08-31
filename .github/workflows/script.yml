@@ -76,7 +76,7 @@ jobs:
           AIO_CLI_ENV: ${{ (github.ref_name == 'prod' || (github.event_name == 'workflow_dispatch' && inputs.environment == 'prod')) && vars.AIO_CLI_ENV_PROD || 'prod' }}
           COMMERCE_BASE_URL: ${{ (github.ref_name == 'prod' || (github.event_name == 'workflow_dispatch' && inputs.environment == 'prod')) && secrets.COMMERCE_BASE_URL_PROD || secrets.COMMERCE_BASE_URL_STAGE }}
   deploy:
-    name: Trigger Deployment
+    name: Trigger Deployment to Stage
     needs: run-scripts
     runs-on: ubuntu-latest
     permissions:
@@ -96,8 +96,17 @@ jobs:
             });
             console.log('Triggered stage deployment workflow');
 
+  deploy-prod:
+    name: Deploy to Production (Requires Approval)
+    needs: run-scripts
+    runs-on: ubuntu-latest
+    if: ${{ github.ref_name == 'prod' || (github.event_name == 'workflow_dispatch' && inputs.environment == 'prod') }}
+    environment: prod
+    permissions:
+      actions: write
+      contents: read
+    steps:
       - name: Trigger Production Deployment
-        if: ${{ github.ref_name == 'prod' || (github.event_name == 'workflow_dispatch' && inputs.environment == 'prod') }}
         uses: actions/github-script@v7
         with:
           script: |
@@ -107,6 +116,5 @@ jobs:
               workflow_id: 'deploy-prod.yml',
               ref: 'prod'
             });
-            console.log('Triggered production deployment workflow');
-
+            console.log('Triggered production deployment workflow after approval');
 
