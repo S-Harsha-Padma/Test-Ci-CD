@@ -81,14 +81,24 @@ jobs:
         with:
           path: |
             .scripts-cache
-          key: ${{ runner.os }}-${{ env.cache-name }}-run-scripts-stage-
+          key: ${{ runner.os }}-${{ env.cache-name }}-stage-${{ hashFiles('scripts/**') }}
           restore-keys: |
-            ${{ runner.os }}-${{ env.cache-name }}-run-scripts-stage-
-      - if: ${{ steps.cache-run-scripts.outputs.cache-hit != 'true' }}
-        name: Run Scripts if not cached
+            ${{ runner.os }}-${{ env.cache-name }}-stage-
+      
+      - name: Skip Scripts (Cache Hit)
+        if: ${{ steps.cache-scripts.outputs.cache-hit == 'true' }}
+        run: |
+          echo "Scripts already completed - skipping due to cache hit"
+          cat .scripts-cache/completed.txt || echo "Cache marker found"
+      
+      - name: Run Scripts if not cached
+        if: ${{ steps.cache-scripts.outputs.cache-hit != 'true' }}
         run: |
           npm run create-shipping-carriers
           npm run create-payment-methods
+          # Create cache marker file
+          mkdir -p .scripts-cache
+          echo "Scripts completed at $(date)" > .scripts-cache/completed.txt
         env:
           OAUTH_CLIENT_ID: ${{ secrets.CLIENTID_STAGE }}
           OAUTH_CLIENT_SECRETS: ${{ secrets.OAUTH_CLIENT_SECRETS_STAGE }}
