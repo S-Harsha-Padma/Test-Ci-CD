@@ -19,6 +19,7 @@ on:
 jobs:
   run-scripts:
     name: Run Configuration Scripts
+    environment: ${{ github.event_name == 'workflow_dispatch' && inputs.environment || (github.ref_name == 'stage' && 'stage' || (github.ref_name == 'prod' && 'prod')) }}
     runs-on: ubuntu-latest
     strategy:
       matrix:
