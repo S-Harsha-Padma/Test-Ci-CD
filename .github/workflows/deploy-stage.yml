@@ -1,7 +1,9 @@
 name: AppBuilder Test Deployment
 
 on:
-  workflow_dispatch:
+  push:
+    branches:
+      - stage
   # workflow_run:
   #   workflows: [Run Scripts and Deploy]
   #   types:
