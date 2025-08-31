@@ -1,0 +1,8 @@
+{
+  "type": "object",
+  "properties": {
+    "auth": { "type": "string", "minLength": 1 }
+  },
+  "required": ["auth"],
+  "additionalProperties": true
+}

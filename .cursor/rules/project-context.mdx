@@ -1,0 +1,683 @@
+# Adobe Brand Store App Builder - Project Context
+
+## Project Overview
+
+This is the **Adobe Brand Store App Builder** - a comprehensive Adobe I/O Runtime (App Builder) application that powers Adobe's brand store e-commerce platform. It serves as a sophisticated backend service layer that integrates Adobe Commerce (Magento) with various third-party services, payment gateways, shipping providers, and enterprise systems.
+
+## Core Architecture
+
+### Technology Stack
+- **Adobe I/O Runtime**: Serverless functions platform
+- **Adobe Commerce (Magento)**: Primary e-commerce platform
+- **Edge Delivery Service (EDS)**: Frontend delivery platform
+- **GraphQL**: API layer for data communication
+- **Node.js 22**: Runtime environment
+- **API Mesh**: GraphQL federation layer
+
+### Key Dependencies
+- `@adobe/aio-sdk`: Adobe I/O SDK for authentication and core functionality
+- `@adobe/aio-lib-state`: State management for serverless functions
+- `authorizenet`: Payment gateway integration
+- `axios` & `got`: HTTP client libraries
+- `fast-xml-parser`: XML processing for SOAP APIs
+- `nodemailer`: Email functionality
+- `oauth-1.0a`: OAuth authentication
+
+## Project Structure
+
+### Main Directories
+
+#### `/actions/` - Serverless Functions
+- **`commerce/`**: E-commerce related functions
+  - **`webhook/`**: Real-time webhook handlers for payment, shipping, tax, etc.
+    - **Payment Processing**: Authorize.net integration, payment validation, filtering
+    - **Shipping & Logistics**: Multi-carrier support (UPS, FedEx, USPS, Warehouse)
+    - **Tax Calculation**: Vertex and Zonos integration
+    - **Product Management**: Add-to-cart validation, customer group restrictions
+    - **Gift Card Management**: Redemption validation and restrictions
+    - **Cart Management**: Discount and coupon code management
+    - **📖 Detailed Documentation**: `actions-documentation/01-commerce-webhooks.md`
+  - **`events/`**: Event-driven order processing and ERP integration
+    - **Event Consumer**: Main event router for Adobe Commerce events
+    - **Order Processing**: Order creation, status management, ERP integration
+    - **Invoice Management**: Automatic invoice creation and management
+    - **FedEx Integration**: Cost center management for FedEx orders
+    - **SOAP Client**: ERP system integration via SOAP APIs
+    - **📖 Detailed Documentation**: `actions-documentation/02-commerce-events.md`
+  - **`customer/`**: Customer management and SSO integration
+    - **Customer Group Management**: Group operations and hierarchy
+    - **Contact Us**: Form processing and email notifications
+    - **Authentication Integration**: Adobe identity management
+    - **API Integration**: REST and GraphQL integration
+    - **Data Validation**: Input validation and security
+    - **📖 Detailed Documentation**: `actions-documentation/03-customer-management.md`
+  - **`product/`**: Product and inventory management
+    - **Product Stock Information**: Real-time stock checking
+    - **Product Type Support**: Simple, configurable, bundle products
+    - **Stock Status Management**: IN_STOCK, OUT_OF_STOCK, BACKORDER
+    - **📖 Detailed Documentation**: `actions-documentation/04-product-inventory.md`
+  - **`inventory/`**: Bulk inventory operations
+    - **SFTP Integration**: Secure file transfer for inventory data
+    - **CSV Processing**: Parses inventory update files
+    - **Scheduled Operations**: Daily inventory updates (1 AM cron)
+    - **Error Handling**: Comprehensive error management and reporting
+    - **📖 Detailed Documentation**: `actions-documentation/04-product-inventory.md`
+  - **`payment/`**: Payment gateway integrations
+    - **Authorize.net Integration**: Token-based payment transactions
+    - **Payment Validation**: Real-time payment verification
+    - **Transaction Management**: Authorization and capture workflows
+- **`account/`**: Authentication and SSO services
+  - **SSO Login Handler**: Adobe identity integration
+  - **Data Validation**: Request validation and sanitization
+  - **Schema Definition**: Request/response schemas
+  - **Security Features**: Token management and session security
+  - **📖 Detailed Documentation**: `actions-documentation/05-account-authentication.md`
+- **`ups/`**: UPS address validation services
+  - **Address Validation**: UPS address validation and standardization
+  - **HTTP Client**: UPS API communication
+  - **Authentication**: UPS API credentials and token management
+  - **Error Handling**: Comprehensive error management
+  - **📖 Detailed Documentation**: `actions-documentation/06-ups-services.md`
+- **`generic/`**: Generic utility functions
+- **`utils.js`**: Common utility functions used across all action modules
+  - **String Parameter Handling**: Utilities for processing string parameters
+  - **Data Validation**: Common validation functions
+  - **Error Handling**: Standardized error handling utilities
+  - **📖 Detailed Documentation**: `actions-documentation/07-utilities-and-shared.md`
+
+#### `/lib/` - Shared Libraries
+- **`adobe-commerce.js`**: Core Adobe Commerce integration utilities
+  - **HTTP Client Management**: Manages HTTP clients for Adobe Commerce
+  - **OAuth Authentication**: Handles OAuth 1.0a authentication
+  - **IMS Integration**: Integrates with Adobe Identity Management Service
+  - **Webhook Management**: Handles webhook verification and responses
+  - **📖 Detailed Documentation**: `lib-documentation/02-adobe-commerce-integration.md`
+- **`adobe-auth.js`**: Authentication and OAuth handling
+  - **Credential Resolution**: Resolves authentication credentials
+  - **Token Management**: Manages authentication tokens
+  - **IMS Integration**: Integrates with Adobe Identity Management Service
+  - **📖 Detailed Documentation**: `lib-documentation/01-core-libraries-overview.md`
+- **`aio-state.js`**: State management utilities
+  - **State Management**: Uses Adobe I/O State for data persistence
+  - **Caching**: Implements intelligent caching strategies
+  - **📖 Detailed Documentation**: `lib-documentation/01-core-libraries-overview.md`
+- **`http.js`**: HTTP response constants and utilities
+  - **📖 Detailed Documentation**: `lib-documentation/01-core-libraries-overview.md`
+- **`env.js`**: Environment variable management
+  - **📖 Detailed Documentation**: `lib-documentation/01-core-libraries-overview.md`
+- **`key-values.js`**: Key-value pair utilities
+  - **📖 Detailed Documentation**: `lib-documentation/01-core-libraries-overview.md`
+- **`region-codes.js`**: Geographic region codes and utilities
+  - **📖 Detailed Documentation**: `lib-documentation/01-core-libraries-overview.md`
+
+#### `/scripts/` - Configuration Scripts
+- **`configure-events.js`**: Adobe I/O Events provider and metadata configuration
+  - **Event Provider Management**: Creates and manages event providers in Adobe I/O Events
+  - **Metadata Synchronization**: Ensures event metadata sync with specifications
+  - **Environment Updates**: Updates provider mappings in environment variables
+  - **📖 Detailed Documentation**: `scripts-documentation/01-event-configuration.md`
+- **`configure-commerce-events.js`**: Commerce event integration and subscription setup
+  - **Commerce Event Provider Setup**: Configures event providers in Adobe Commerce
+  - **Event Subscription Management**: Subscribes to specific Commerce events
+  - **Provider Validation**: Ensures correct provider configuration
+  - **📖 Detailed Documentation**: `scripts-documentation/01-event-configuration.md`
+- **`create-payment-methods.js`**: OOPE payment method creation
+  - **Payment Method Creation**: Creates payment methods from YAML configuration
+  - **OOPE Integration**: Handles OOPE payment method setup
+  - **Batch Processing**: Processes multiple payment methods
+  - **📖 Detailed Documentation**: `scripts-documentation/02-payment-methods.md`
+- **`create-shipping-carriers.js`**: Shipping carrier creation and setup
+  - **Carrier Creation**: Creates shipping carriers from YAML configuration
+  - **OOPE Integration**: Handles OOPE shipping carrier setup
+  - **Batch Processing**: Processes multiple carriers
+  - **📖 Detailed Documentation**: `scripts-documentation/03-shipping-carriers.md`
+- **`get-shipping-carriers.js`**: Shipping carrier retrieval and display
+  - **Carrier Retrieval**: Fetches all shipping carriers from Commerce
+  - **Data Display**: Formats and displays carrier information
+  - **Debugging Support**: Useful for verifying carrier configuration
+  - **📖 Detailed Documentation**: `scripts-documentation/03-shipping-carriers.md`
+
+#### `/resolvers/` - GraphQL Resolvers
+- **`stock-resolvers.js`**: Product stock information resolvers
+  - **Schema Extension**: Extends SimpleProductView with qty field
+  - **Real-time Data**: Fetches live stock information from Adobe Commerce
+  - **SKU-based Resolution**: Uses product SKU to retrieve stock quantities
+  - **📖 Detailed Documentation**: `resolvers-documentation/01-stock-resolvers.md`
+
+#### `/test/` - Test Suite
+- Comprehensive Jest-based testing framework
+- Unit tests for all major functions
+- Mock services for isolated testing
+
+#### `/requestSchema/` & `/responseSchema/` - API Schemas
+- **Request Schemas**: Input validation for GraphQL operations
+- **Response Schemas**: Output validation and type safety
+- **Schema Pairs**: Request-response schema mapping for API contracts
+- **📖 Request Documentation**: `requestSchema-documentation/01-request-schemas-overview.md`
+- **📖 Validation Patterns**: `requestSchema-documentation/02-input-validation-patterns.md`
+- **📖 Response Documentation**: `responseSchema-documentation/01-response-schemas-overview.md`
+- **📖 Schema Mapping**: `responseSchema-documentation/02-request-response-mapping.md`
+
+#### `/actions-documentation/` - Detailed Documentation
+- **`01-commerce-webhooks.md`**: Comprehensive webhook handlers documentation
+- **`02-commerce-events.md`**: Event-driven processing documentation
+- **`03-customer-management.md`**: Customer management and authentication
+- **`04-product-inventory.md`**: Product and inventory management
+- **`05-account-authentication.md`**: Account and SSO authentication
+- **`06-ups-services.md`**: UPS address validation services
+- **`07-utilities-and-shared.md`**: Utilities and shared components
+
+#### `/scripts-documentation/` - Scripts and Configuration
+- **`01-event-configuration.md`**: Event provider and Commerce event integration
+- **`02-payment-methods.md`**: Payment method setup and management
+- **`03-shipping-carriers.md`**: Shipping carrier setup and management
+- **`04-configuration-management.md`**: General configuration patterns and best practices
+
+#### `/resolvers-documentation/` - GraphQL Resolvers
+- **`01-stock-resolvers.md`**: Product stock information resolvers
+- **`02-graphql-schema-extension.md`**: GraphQL schema extension patterns and best practices
+
+#### `/lib-documentation/` - Core Libraries Documentation
+- **`01-core-libraries-overview.md`**: Comprehensive core libraries documentation
+- **`02-adobe-commerce-integration.md`**: Adobe Commerce integration library details
+
+#### `/requestSchema-documentation/` - Request Schema Documentation
+- **`01-request-schemas-overview.md`**: Comprehensive request schema documentation
+- **`02-input-validation-patterns.md`**: Input validation patterns and best practices
+
+#### `/responseSchema-documentation/` - Response Schema Documentation
+- **`01-response-schemas-overview.md`**: Comprehensive response schema documentation
+- **`02-request-response-mapping.md`**: Request-response schema mapping and patterns
+
+## Core Functionality Modules
+
+### 1. Authentication & User Management
+- **SSO Integration**: Adobe identity-based authentication
+- **Customer Group Management**: Group-based pricing and permissions
+- **OAuth Flows**: Support for OAuth 1.0a and IMS authentication
+- **📖 Detailed Documentation**: `actions-documentation/05-account-authentication.md`
+
+### 2. Payment Processing
+- **Authorize.net Integration**: Primary payment processor
+- **OOPE (Order on Payment Entry)**: Custom payment methods
+- **Payment Validation**: Real-time payment verification
+- **Webhook Security**: Signature verification for webhooks
+- **📖 Detailed Documentation**: `actions-documentation/01-commerce-webhooks.md`
+
+### 3. Shipping & Logistics
+- **Multi-Carrier Support**: UPS, FedEx, USPS, Warehouse Pickup
+- **Address Validation**: UPS address verification
+- **Rate Calculation**: Real-time shipping cost calculation
+- **Customer Group Filtering**: Group-specific shipping options
+- **📖 Detailed Documentation**: `actions-documentation/01-commerce-webhooks.md`
+
+### 4. Tax Calculation
+- **Vertex Integration**: Enterprise tax calculation
+- **Zonos Integration**: International tax and duty
+- **Tax Class Mapping**: Product-specific tax rules
+- **Tax Exempt Groups**: Customer group-based exemptions
+- **📖 Detailed Documentation**: `actions-documentation/01-commerce-webhooks.md`
+
+### 5. Inventory Management
+- **Real-time Stock Checking**: Live inventory validation
+- **Bulk Updates**: SFTP-based inventory synchronization
+- **Scheduled Operations**: Daily inventory updates (1 AM cron)
+- **Product Availability**: Stock level validation
+- **📖 Detailed Documentation**: `actions-documentation/04-product-inventory.md`
+
+### 6. Order Management & ERP Integration
+- **Event-Driven Processing**: Adobe Commerce event consumption
+- **ERP Integration**: SOAP-based enterprise system integration
+- **Order Status Synchronization**: Real-time status updates
+- **Invoice Generation**: Automated invoice creation
+- **📖 Detailed Documentation**: `actions-documentation/02-commerce-events.md`
+
+### 7. Customer Service
+- **Contact Form Processing**: Customer support integration
+- **Email Notifications**: Automated email workflows
+- **Ticket Creation**: Support ticket management
+- **📖 Detailed Documentation**: `actions-documentation/03-customer-management.md`
+
+### 8. Gift Card & Discount Management
+- **Gift Card Redemption**: Balance checking and validation
+- **Discount Management**: Cart discount removal logic
+- **Promotional Codes**: Code-based discounting
+- **📖 Detailed Documentation**: `actions-documentation/01-commerce-webhooks.md`
+
+### 9. Configuration & Setup Management
+- **Event Provider Configuration**: Adobe I/O Events setup and management
+- **Commerce Event Integration**: Event subscription and provider configuration
+- **Payment Method Setup**: OOPE payment method creation and management
+- **Shipping Carrier Setup**: Carrier creation and configuration
+- **📖 Detailed Documentation**: `scripts-documentation/` (multiple focused files)
+
+### 10. GraphQL Schema Extension
+- **Schema Extensions**: Extend existing GraphQL types with custom fields
+- **Resolver Implementation**: Custom resolution logic for extended fields
+- **Real-time Data Integration**: Integrate live data from backend services
+- **📖 Detailed Documentation**: `resolvers-documentation/` (multiple focused files)
+
+### 11. Core Libraries and Utilities
+- **Adobe Commerce Integration**: Comprehensive Commerce API integration
+- **Authentication Management**: OAuth and IMS authentication handling
+- **State Management**: Caching and data persistence with Adobe I/O State
+- **Utility Functions**: HTTP constants, environment management, key-value encoding
+- **📖 Detailed Documentation**: `lib-documentation/` (multiple focused files)
+
+### 12. API Schema Management
+- **Request Validation**: Input validation for GraphQL operations
+- **Response Validation**: Output validation and type safety
+- **Schema Contracts**: Request-response schema mapping for API contracts
+- **📖 Request Documentation**: `requestSchema-documentation/` (multiple focused files)
+- **📖 Response Documentation**: `responseSchema-documentation/` (multiple focused files)
+
+## API Mesh Configuration
+
+### GraphQL Federation
+The application uses Adobe's API Mesh to federate multiple data sources:
+
+1. **Adobe Commerce GraphQL**: Primary e-commerce data
+2. **SSO Authentication**: User authentication endpoints
+3. **Customer Management**: Customer group and profile APIs
+4. **Product Stock**: Real-time inventory data
+5. **UPS Address Validation**: Address verification service
+6. **Contact Forms**: Customer service integration
+
+### CORS Configuration
+Supports multiple domains including Adobe Experience Manager (AEM) pages, Edge Delivery Service domains, and development environments.
+
+## Configuration Files
+
+### Key Configuration Files
+- **`app.config.yaml`**: Adobe I/O Runtime action configurations
+- **`mesh.json`**: API Mesh GraphQL federation setup
+- **`payment-methods.yaml`**: Payment method definitions
+- **`shipping-carriers.yaml`**: Shipping carrier configurations
+- **`events.config.yaml`**: Event registration and consumption setup
+
+### Environment Variables
+The application uses extensive environment variable management for:
+- OAuth credentials for Adobe services
+- API keys for third-party services
+- Commerce instance configuration
+- Service endpoints and URLs
+
+## Development Workflow
+
+### Local Development
+- Adobe I/O CLI for local development
+- Hot reloading and debugging support
+- Environment variable management
+- Service mocking for isolated development
+- **GitHub Workflow**: Pull request → CI testing → Staging deployment → Production release
+
+### Testing
+- **Jest**: Unit and integration testing
+- **End-to-End Tests**: Complete workflow validation
+- **Mock Services**: Isolated testing environment
+- **Code Coverage**: Comprehensive test coverage
+- **CI/CD Testing**: Automated testing in GitHub Actions workflows
+
+### Code Quality
+- **ESLint**: Code linting and style enforcement
+- **Prettier**: Code formatting
+- **Schema Validation**: Request/response validation
+- **CI/CD Integration**: Automated code quality checks in GitHub Actions
+
+## Deployment & Operations
+
+### CI/CD Pipeline
+The project uses GitHub Actions for continuous integration and deployment:
+
+#### Active Workflows
+- **Node CI Tests** (`.github/workflows/ci.yml`): Primary CI workflow for code quality and testing
+  - **Triggers**: Push to main, pull requests
+  - **Environment**: Ubuntu Latest, Node.js 22.x
+  - **Steps**: Checkout, Node.js setup, dependencies, code quality checks, testing
+
+#### Sample Workflows
+- **Production Deployment** (`.github/workflows-samples/deploy_prod.yml`): Deploy to production on release
+- **Staging Deployment** (`.github/workflows-samples/deploy_stage.yml`): Deploy to staging on main push
+- **Pull Request Testing** (`.github/workflows-samples/pr_test.yml`): Cross-platform testing for PRs
+
+#### Key Features
+- **Adobe I/O Integration**: Uses Adobe I/O CLI and actions for deployment
+- **OAuth Authentication**: Secure authentication with Adobe services
+- **Environment Management**: Separate staging and production environments
+- **Code Quality Gates**: Automated formatting, linting, and testing
+- **📖 Detailed Documentation**: [`CICD.md`](CICD.md) - Complete CI/CD pipeline documentation
+
+#### Current Gaps & Improvement Areas
+- **Workflow Activation**: Deployment workflows are in samples folder, not activated
+- **Node.js Version Inconsistency**: CI uses 22.x, deployments use 20.x
+- **Security Scanning**: No automated vulnerability scanning
+- **Test Coverage**: Limited coverage reporting and quality gates
+- **Performance Testing**: No performance validation in pipeline
+- **Notifications**: Limited error handling and failure notifications
+- **Caching Strategy**: Basic npm caching, missing build artifact caching
+- **Blue-Green Deployment**: Direct deployment without zero-downtime strategy
+- **📖 Detailed Recommendations**: [`CI-CD-IMPROVEMENTS.md`](CI-CD-IMPROVEMENTS.md) - Comprehensive improvement roadmap
+
+### Adobe I/O Runtime Actions
+The application is organized into logical action packages:
+
+1. **commerce-webhook**: Real-time webhook handlers
+2. **commerce-events**: Event-driven order processing
+3. **account-ssologin**: Authentication services
+4. **customer**: Customer management APIs
+5. **product**: Product and inventory APIs
+6. **inventory-update**: Bulk inventory operations
+7. **ups**: Address validation services
+
+### Scheduled Operations
+- **ERP Order Status**: 15-minute intervals for order status updates
+- **Inventory Updates**: Daily at 1 AM for bulk inventory synchronization
+
+## Security & Compliance
+
+### Authentication & Authorization
+- OAuth 1.0a for Adobe Commerce integration
+- IMS (Identity Management Service) for Adobe services
+- Webhook signature verification for security
+- Customer group-based access control
+
+### Data Protection
+- Secure credential management
+- Encrypted communication channels
+- Audit logging and monitoring
+- GDPR-compliant data handling
+
+## Integration Points
+
+### External Services
+1. **Adobe Commerce**: Primary e-commerce platform
+2. **Adobe Experience Manager**: Content management
+3. **Edge Delivery Service**: Frontend delivery
+4. **ERP Systems**: Enterprise resource planning
+5. **Payment Gateways**: Authorize.net, OOPE
+6. **Shipping Carriers**: UPS, FedEx, USPS
+7. **Tax Services**: Vertex, Zonos
+8. **Email Services**: Nodemailer integration
+
+### Internal Adobe Services
+1. **Adobe I/O Events**: Event-driven architecture
+2. **Adobe I/O State**: State management
+3. **Adobe IMS**: Identity management
+4. **Adobe Developer Console**: Project management
+
+## Business Logic & Workflows
+
+### Customer Journey
+1. **Authentication**: SSO login via Adobe identity
+2. **Browsing**: Product catalog with real-time inventory
+3. **Cart Management**: Add products with availability checks
+4. **Checkout**: Address validation, shipping calculation, payment processing
+5. **Order Processing**: ERP integration, status updates, invoice generation
+6. **Fulfillment**: Shipping integration, tracking, delivery
+
+### Order Processing Flow
+1. **Order Creation**: Event-driven order processing
+2. **Payment Validation**: Real-time payment verification
+3. **Inventory Check**: Stock level validation
+4. **Shipping Calculation**: Multi-carrier rate calculation
+5. **Tax Calculation**: Multi-provider tax computation
+6. **ERP Integration**: Order transmission to enterprise systems
+7. **Status Updates**: Real-time order status synchronization
+
+## Key Patterns & Best Practices
+
+### Serverless Architecture
+- Function-based organization
+- Stateless design
+- Event-driven processing
+- Auto-scaling capabilities
+
+### Error Handling
+- Comprehensive error logging
+- Graceful degradation
+- Retry mechanisms
+- User-friendly error messages
+
+### Security Patterns
+- Webhook signature verification
+- OAuth authentication flows
+- Input validation and sanitization
+- Secure credential management
+
+### Performance Optimization
+- Response caching strategies
+- Efficient HTTP client usage
+- Optimized database queries
+- Resource pooling where applicable
+
+## Common Development Tasks
+
+### Adding New Webhook Handlers
+1. Create new action in `/actions/commerce/webhook/`
+2. Implement webhook signature verification
+3. Add request/response schemas
+4. Update `app.config.yaml` with new action
+5. Add comprehensive tests
+6. **📖 Reference**: `actions-documentation/01-commerce-webhooks.md` for detailed patterns
+7. **🎯 Visual Reference**: [Payment Processing Flow](docs/architecture/sequence-diagrams/01-payment-processing-flow.md) for payment webhook patterns
+
+### Integrating New Payment Methods
+1. Create payment method configuration in `payment-methods.yaml`
+2. Implement payment validation logic
+3. Add payment method filtering if needed
+4. Update webhook handlers
+5. Test payment flows
+6. **📖 Reference**: `actions-documentation/01-commerce-webhooks.md` for payment patterns
+7. **🎯 Visual Reference**: [Payment Processing Flow](docs/architecture/sequence-diagrams/01-payment-processing-flow.md) for payment workflow visualization
+
+### Adding New Shipping Carriers
+1. Create carrier configuration in `shipping-carriers.yaml`
+2. Implement carrier-specific rate calculation
+3. Add address validation if required
+4. Update shipping webhook handlers
+5. Test shipping workflows
+6. **📖 Reference**: `actions-documentation/01-commerce-webhooks.md` for shipping patterns
+7. **🎯 Visual Reference**: [Shipping Calculator Flow](docs/architecture/sequence-diagrams/02-shipping-calculator-flow.md) for shipping workflow visualization
+
+### Extending GraphQL Schema
+1. Update `mesh.json` with new sources
+2. Add request/response schemas
+3. Implement resolvers if needed
+4. Update CORS configuration
+5. Test GraphQL queries
+6. **📖 Reference**: `resolvers-documentation/02-graphql-schema-extension.md` for schema extension patterns
+
+### Adding New Resolvers
+1. Create resolver file in `/resolvers/` directory
+2. Define schema extensions in `mesh.json`
+3. Implement resolver logic with proper error handling
+4. Add resolver to `additionalResolvers` configuration
+5. Test resolver with GraphQL queries
+6. **📖 Reference**: `resolvers-documentation/01-stock-resolvers.md` for resolver patterns
+
+### Adding New Core Libraries
+1. Create library file in `/lib/` directory
+2. Implement utility functions with proper error handling
+3. Add comprehensive logging and documentation
+4. Create unit tests for library functions
+5. Update imports across action modules
+6. **📖 Reference**: `lib-documentation/01-core-libraries-overview.md` for library patterns
+
+### Adding New API Schemas
+1. Create request schema in `/requestSchema/` directory
+2. Create response schema in `/responseSchema/` directory
+3. Update API Mesh configuration with schema references
+4. Test schema validation with sample data
+5. Validate GraphQL type generation
+6. **📖 Request Reference**: `requestSchema-documentation/02-input-validation-patterns.md` for validation patterns
+7. **📖 Response Reference**: `responseSchema-documentation/02-request-response-mapping.md` for schema patterns
+
+### Adding New Customer Management Features
+1. Create new action in `/actions/commerce/customer/`
+2. Implement authentication and validation
+3. Add customer group management if needed
+4. Update API endpoints
+5. Test customer workflows
+6. **📖 Reference**: `actions-documentation/03-customer-management.md` for customer patterns
+7. **🎯 Visual Reference**: [Authentication Flow](docs/architecture/sequence-diagrams/05-authentication-flow.md) for authentication workflow visualization
+
+### Implementing New Event Handlers
+1. Create new action in `/actions/commerce/events/`
+2. Implement event processing logic
+3. Add ERP integration if required
+4. Update event consumer routing
+5. Test event workflows
+6. **📖 Reference**: `actions-documentation/02-commerce-events.md` for event patterns
+7. **🎯 Visual Reference**: [Order Processing Flow](docs/architecture/sequence-diagrams/03-order-processing-flow.md) for order processing workflow visualization
+
+### Adding New Inventory Operations
+1. Create new action in `/actions/commerce/inventory/`
+2. Implement inventory update logic
+3. Add SFTP integration if required
+4. Update scheduled operations
+5. Test inventory workflows
+6. **📖 Reference**: `actions-documentation/04-product-inventory.md` for inventory patterns
+7. **🎯 Visual Reference**: [Inventory Synchronization Flow](docs/architecture/sequence-diagrams/04-inventory-sync-flow.md) for inventory workflow visualization
+
+### Setting Up New Payment Methods
+1. Create payment method configuration in `payment-methods.yaml`
+2. Run `create-payment-methods.js` script to create in Commerce
+3. Implement payment validation webhook if needed
+4. Test payment processing workflows
+5. **📖 Reference**: `scripts-documentation/02-payment-methods.md` for payment setup
+6. **🎯 Visual Reference**: [Payment Processing Flow](docs/architecture/sequence-diagrams/01-payment-processing-flow.md) for payment workflow visualization
+
+### Setting Up New Shipping Carriers
+1. Create shipping carrier configuration in `shipping-carriers.yaml`
+2. Run `create-shipping-carriers.js` script to create in Commerce
+3. Implement carrier-specific rate calculation if needed
+4. Test shipping workflows
+5. **📖 Reference**: `scripts-documentation/03-shipping-carriers.md` for shipping setup
+6. **🎯 Visual Reference**: [Shipping Calculator Flow](docs/architecture/sequence-diagrams/02-shipping-calculator-flow.md) for shipping workflow visualization
+
+### Configuring Event Providers
+1. Update `events.config.yaml` with new event specifications
+2. Run `configure-events.js` to create/update providers
+3. Run `configure-commerce-events.js` to set up Commerce integration
+4. Test event processing workflows
+5. **📖 Reference**: `scripts-documentation/01-event-configuration.md` for event setup
+6. **🎯 Visual Reference**: [Order Processing Flow](docs/architecture/sequence-diagrams/03-order-processing-flow.md) for order processing workflow visualization
+
+## Troubleshooting Guide
+
+### Common Issues
+1. **Webhook Signature Failures**: Check `COMMERCE_WEBHOOKS_PUBLIC_KEY` configuration
+   - **📖 Reference**: `actions-documentation/01-commerce-webhooks.md` for webhook security patterns
+2. **OAuth Authentication Errors**: Verify IMS credentials and scopes
+   - **📖 Reference**: `actions-documentation/05-account-authentication.md` for authentication patterns
+3. **Payment Processing Failures**: Check Authorize.net credentials and transaction environment
+   - **📖 Reference**: `actions-documentation/01-commerce-webhooks.md` for payment error handling
+4. **Shipping Rate Calculation Errors**: Verify carrier API credentials and service endpoints
+   - **📖 Reference**: `actions-documentation/01-commerce-webhooks.md` for shipping error patterns
+5. **ERP Integration Issues**: Check SOAP endpoint configuration and authentication
+   - **📖 Reference**: `actions-documentation/02-commerce-events.md` for ERP integration patterns
+6. **Inventory Sync Failures**: Check SFTP credentials and file formats
+   - **📖 Reference**: `actions-documentation/04-product-inventory.md` for inventory error handling
+7. **UPS Address Validation Errors**: Verify UPS API credentials and service endpoints
+   - **📖 Reference**: `actions-documentation/06-ups-services.md` for UPS error patterns
+8. **Configuration Script Failures**: Check configuration files and environment variables
+   - **📖 Reference**: `scripts-documentation/04-configuration-management.md` for configuration issues
+9. **Event Provider Setup Issues**: Verify Adobe I/O Events configuration
+   - **📖 Reference**: `scripts-documentation/01-event-configuration.md` for event setup issues
+
+### Debugging Tips
+- Use `LOG_LEVEL=debug` for detailed logging
+- Check Adobe I/O Runtime logs for function execution details
+- Verify environment variable configuration
+- Test individual functions using Adobe I/O CLI
+- Use mock services for isolated testing
+- **📖 Reference**: `actions-documentation/07-utilities-and-shared.md` for logging and error handling patterns
+- **📖 Reference**: `scripts-documentation/04-configuration-management.md` for configuration debugging
+- **🎯 Visual Reference**: [CI/CD Deployment Flow](docs/architecture/sequence-diagrams/06-ci-cd-deployment-flow.md) for deployment troubleshooting
+
+## Future Considerations
+
+### Potential Enhancements
+1. **Microservices Migration**: Breaking down into smaller, focused services
+2. **Event Sourcing**: Implementing event sourcing for better audit trails
+3. **Machine Learning**: Predictive inventory and demand forecasting
+4. **Real-time Analytics**: Live business intelligence and reporting
+5. **Mobile Optimization**: Enhanced mobile commerce capabilities
+
+### Technical Debt
+1. **Code Modularization**: Further separation of concerns
+2. **API Versioning**: Implementing proper API versioning strategy
+3. **Documentation**: Enhanced API documentation and developer guides
+4. **Performance Optimization**: Query optimization and caching improvements
+
+## Documentation Index
+
+### 📚 Complete Documentation Suite
+This project includes comprehensive documentation organized into focused modules:
+
+#### Architecture & System Design
+- **[Sequence Diagrams](docs/architecture/sequence-diagrams/README.md)**: Visual system interaction flows
+  - [Payment Processing Flow](docs/architecture/sequence-diagrams/01-payment-processing-flow.md)
+  - [Shipping Calculator Flow](docs/architecture/sequence-diagrams/02-shipping-calculator-flow.md)
+  - [Order Processing Flow](docs/architecture/sequence-diagrams/03-order-processing-flow.md)
+  - [Inventory Synchronization Flow](docs/architecture/sequence-diagrams/04-inventory-sync-flow.md)
+  - [Authentication Flow](docs/architecture/sequence-diagrams/05-authentication-flow.md)
+  - [CI/CD Deployment Flow](docs/architecture/sequence-diagrams/06-ci-cd-deployment-flow.md)
+
+#### Project Planning & Roadmap
+- **[Future Roadmap](docs/FUTURE_ROADMAP.md)**: Project roadmap with planned features and development phases
+  - **Phase 1**: Launch Preparation (March 2025) - bundled products, gift cards, address validation
+  - **Phase 2**: Post-Launch Enhancements (Q2 2025) - wishlist, multi-step checkout, analytics
+  - **Phase 3**: Advanced Features (Q3-Q4 2025) - SSO, personalization, mobile app, AI
+
+#### Component Documentation
+- **`actions-documentation/01-commerce-webhooks.md`**: Webhook handlers and real-time processing
+- **`actions-documentation/02-commerce-events.md`**: Event-driven architecture and ERP integration
+- **`actions-documentation/03-customer-management.md`**: Customer management and authentication
+- **`actions-documentation/04-product-inventory.md`**: Product and inventory management
+- **`actions-documentation/05-account-authentication.md`**: Account and SSO authentication
+- **`actions-documentation/06-ups-services.md`**: UPS address validation services
+- **`actions-documentation/07-utilities-and-shared.md`**: Utilities and shared components
+- **`scripts-documentation/01-event-configuration.md`**: Event provider and Commerce event integration
+- **`scripts-documentation/02-payment-methods.md`**: Payment method setup and management
+- **`scripts-documentation/03-shipping-carriers.md`**: Shipping carrier setup and management
+- **`scripts-documentation/04-configuration-management.md`**: General configuration patterns and best practices
+- **`resolvers-documentation/01-stock-resolvers.md`**: Product stock information resolvers
+- **`resolvers-documentation/02-graphql-schema-extension.md`**: GraphQL schema extension patterns and best practices
+- **`lib-documentation/01-core-libraries-overview.md`**: Comprehensive core libraries documentation
+- **`lib-documentation/02-adobe-commerce-integration.md`**: Adobe Commerce integration library details
+- **`requestSchema-documentation/01-request-schemas-overview.md`**: Comprehensive request schema documentation
+- **`requestSchema-documentation/02-input-validation-patterns.md`**: Input validation patterns and best practices
+- **`responseSchema-documentation/01-response-schemas-overview.md`**: Comprehensive response schema documentation
+- **`responseSchema-documentation/02-request-response-mapping.md`**: Request-response schema mapping and patterns
+
+### 🎯 Quick Reference Guide
+- **Project Planning**: Start with [Future Roadmap](docs/FUTURE_ROADMAP.md) for development phases and feature planning
+- **System Architecture**: Use [Sequence Diagrams](docs/architecture/sequence-diagrams/README.md) for visual system understanding
+- **Payment Processing**: Use [Payment Flow Diagram](docs/architecture/sequence-diagrams/01-payment-processing-flow.md) for payment workflows
+- **Shipping Operations**: Use [Shipping Flow Diagram](docs/architecture/sequence-diagrams/02-shipping-calculator-flow.md) for shipping workflows
+- **Order Management**: Use [Order Flow Diagram](docs/architecture/sequence-diagrams/03-order-processing-flow.md) for order processing
+- **Inventory Management**: Use [Inventory Flow Diagram](docs/architecture/sequence-diagrams/04-inventory-sync-flow.md) for inventory operations
+- **Authentication**: Use [Authentication Flow Diagram](docs/architecture/sequence-diagrams/05-authentication-flow.md) for auth workflows
+- **Deployment**: Use [CI/CD Flow Diagram](docs/architecture/sequence-diagrams/06-ci-cd-deployment-flow.md) for deployment processes
+- **Webhook Development**: Use `01-commerce-webhooks.md` for payment, shipping, tax handlers
+- **Event Processing**: Use `02-commerce-events.md` for order processing and ERP integration
+- **Customer Features**: Use `03-customer-management.md` for customer management features
+- **Inventory Operations**: Use `04-product-inventory.md` for stock and inventory management
+- **Authentication**: Use `05-account-authentication.md` for SSO and authentication
+- **Address Validation**: Use `06-ups-services.md` for UPS integration
+- **Utilities**: Use `07-utilities-and-shared.md` for common patterns and utilities
+- **Event Configuration**: Use `scripts-documentation/01-event-configuration.md` for event setup
+- **Payment Methods**: Use `scripts-documentation/02-payment-methods.md` for payment setup
+- **Shipping Carriers**: Use `scripts-documentation/03-shipping-carriers.md` for shipping setup
+- **Configuration Management**: Use `scripts-documentation/04-configuration-management.md` for general patterns
+- **Core Libraries**: Use `lib-documentation/01-core-libraries-overview.md` for library documentation
+- **Commerce Integration**: Use `lib-documentation/02-adobe-commerce-integration.md` for Commerce API integration
+- **Stock Resolvers**: Use `resolvers-documentation/01-stock-resolvers.md` for stock resolution
+- **Schema Extensions**: Use `resolvers-documentation/02-graphql-schema-extension.md` for GraphQL patterns
+- **Request Schemas**: Use `requestSchema-documentation/01-request-schemas-overview.md` for request schema documentation
+- **Validation Patterns**: Use `requestSchema-documentation/02-input-validation-patterns.md` for input validation
+- **Response Schemas**: Use `responseSchema-documentation/01-response-schemas-overview.md` for response schema documentation
+- **Schema Mapping**: Use `responseSchema-documentation/02-request-response-mapping.md` for request-response patterns
+
+This project represents a sophisticated, enterprise-grade e-commerce backend system that demonstrates best practices in serverless architecture, event-driven design, and comprehensive third-party service integration. 
