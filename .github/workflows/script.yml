@@ -1,4 +1,4 @@
-name: Run Scripts and Deploy
+name: Run Scripts and Trigger Deployment
 
 on:
   push:
