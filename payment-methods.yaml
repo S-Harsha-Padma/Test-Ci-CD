@@ -1,0 +1,14 @@
+methods:
+  - payment_method:
+      code: 'authorizenet'
+      title: 'Credit card'
+      active: true
+      backend_integration_url: https://3582053-903greenboaboa-stage.adobeioruntime.net/api/v1/web/payment-method/authnet
+      stores:
+        - default
+      order_status: processing
+      currencies:
+        - USD
+      custom_config:
+        - key: can_refund
+          value: true

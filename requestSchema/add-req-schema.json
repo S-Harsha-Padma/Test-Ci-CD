@@ -1,0 +1,41 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Address Schema",
+  "type": "object",
+  "properties": {
+    "address": {
+      "type": "object",
+      "properties": {
+        "firstname": {
+          "type": "string"
+        },
+        "lastname": {
+          "type": "string"
+        },
+        "company": {
+          "type": "string"
+        },
+        "street_line": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "postcode": {
+          "type": "string"
+        },
+        "city": {
+          "type": "string"
+        },
+        "region_code": {
+          "type": "string"
+        },
+        "country_code": {
+          "type": "string"
+        }
+      },
+      "required": ["firstname", "lastname", "street_line", "postcode", "city", "region_code", "country_code"]
+    }
+  },
+  "required": ["address"]
+}

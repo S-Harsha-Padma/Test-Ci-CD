@@ -1,0 +1,71 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Address Validation Response Schema",
+  "type": "object",
+  "properties": {
+    "candidates": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "AddressClassification": {
+            "type": "object",
+            "properties": {
+              "Code": {
+                "type": "string"
+              },
+              "Description": {
+                "type": "string"
+              }
+            },
+            "required": ["Code", "Description"]
+          },
+          "AddressKeyFormat": {
+            "type": "object",
+            "properties": {
+              "AddressLine": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "CountryCode": {
+                "type": "string"
+              },
+              "PoliticalDivision1": {
+                "type": "string"
+              },
+              "PoliticalDivision2": {
+                "type": "string"
+              },
+              "PostcodeExtendedLow": {
+                "type": "string"
+              },
+              "PostcodePrimaryLow": {
+                "type": "string"
+              },
+              "Region": {
+                "type": "string"
+              }
+            },
+            "required": ["CountryCode"]
+          }
+        },
+        "required": ["AddressKeyFormat"]
+      }
+    },
+    "responseStatus": {
+      "type": "object",
+      "properties": {
+        "Code": {
+          "type": "string"
+        },
+        "Description": {
+          "type": "string"
+        }
+      },
+      "required": ["Code", "Description"]
+    }
+  },
+  "required": ["responseStatus"]
+}

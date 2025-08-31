@@ -1,0 +1,11 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Customer Group Response Schema",
+  "type": "object",
+  "properties": {
+    "customer_group": {
+      "type": "string"
+    }
+  },
+  "required": ["customer_group"]
+}

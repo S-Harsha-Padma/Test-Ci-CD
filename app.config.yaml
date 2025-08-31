@@ -1,0 +1,413 @@
+application:
+  actions: actions
+  runtimeManifest:
+    packages:
+      #      erp-log:
+      #        license: Apache-2.0
+      #        actions:
+      #          order-params:
+      #            function: actions/commerce/events/order/params/index.js
+      #            web: 'yes'
+      #            runtime: nodejs:22
+      #            inputs:
+      #              LOG_LEVEL: debug
+      #              ORDER_INCREMENT_ID_PARAM: $ORDER_INCREMENT_ID_PARAM
+      #            annotations:
+      #              require-adobe-auth: false
+      #              final: true
+      ups:
+        license: Apache-2.0
+        actions:
+          validate-address:
+            function: actions/ups/address/index.js
+            web: 'yes'
+            runtime: nodejs:22
+            inputs:
+              LOG_LEVEL: debug
+              SERVICE_DOMAIN: $UPS_SERVICE_DOMAIN
+              CLIENT_ID: $UPS_CLIENT_ID
+              CLIENT_SECRET: $UPS_CLIENT_SECRET
+              REQUEST_OPTION: 3
+            annotations:
+              require-adobe-auth: false
+              final: true
+      commerce-webhook:
+        license: Apache-2.0
+        actions:
+          validate-product:
+            function: actions/commerce/webhook/product/add-to-cart.js
+            web: 'raw'
+            runtime: nodejs:22
+            inputs:
+              LOG_LEVEL: debug
+              COMMERCE_WEBHOOKS_PUBLIC_KEY: $COMMERCE_WEBHOOKS_PUBLIC_KEY
+              COMMERCE_BASE_URL: $COMMERCE_BASE_URL
+              CUSTOMER_GROUP_CODE: $CUSTOMER_GROUP_CODE
+              OAUTH_CLIENT_ID: $OAUTH_CLIENT_ID
+              OAUTH_CLIENT_SECRETS: $OAUTH_CLIENT_SECRETS
+              OAUTH_TECHNICAL_ACCOUNT_ID: $OAUTH_TECHNICAL_ACCOUNT_ID
+              OAUTH_TECHNICAL_ACCOUNT_EMAIL: $OAUTH_TECHNICAL_ACCOUNT_EMAIL
+              OAUTH_IMS_ORG_ID: $OAUTH_IMS_ORG_ID
+              OAUTH_SCOPES: $OAUTH_SCOPES
+              AIO_CLI_ENV: $AIO_CLI_ENV
+            annotations:
+              raw-http: true
+              require-adobe-auth: false
+              final: true
+          filter-payment:
+            function: actions/commerce/webhook/payment/filter.js
+            web: 'raw'
+            runtime: nodejs:22
+            inputs:
+              LOG_LEVEL: debug
+              COMMERCE_WEBHOOKS_PUBLIC_KEY: $COMMERCE_WEBHOOKS_PUBLIC_KEY
+              COMMERCE_GRAPHQL_BASE_URL: $COMMERCE_GRAPHQL_BASE_URL
+              COMMERCE_BASE_URL: $COMMERCE_BASE_URL
+              OAUTH_CLIENT_ID: $OAUTH_CLIENT_ID
+              OAUTH_CLIENT_SECRETS: $OAUTH_CLIENT_SECRETS
+              OAUTH_TECHNICAL_ACCOUNT_ID: $OAUTH_TECHNICAL_ACCOUNT_ID
+              OAUTH_TECHNICAL_ACCOUNT_EMAIL: $OAUTH_TECHNICAL_ACCOUNT_EMAIL
+              OAUTH_IMS_ORG_ID: $OAUTH_IMS_ORG_ID
+              OAUTH_SCOPES: $OAUTH_SCOPES
+              AIO_CLI_ENV: $AIO_CLI_ENV
+              CUSTOMER_GROUP_CODE: $PO_ELIGIBLE_CUSTOMER_GROUP
+            annotations:
+              raw-http: true
+              require-adobe-auth: false
+              final: true
+          calculate-taxes:
+            function: actions/commerce/webhook/tax/calculate.js
+            web: 'raw'
+            runtime: nodejs:22
+            inputs:
+              LOG_LEVEL: debug
+              COMMERCE_WEBHOOKS_PUBLIC_KEY: $COMMERCE_WEBHOOKS_PUBLIC_KEY
+              VERTEX_SERVICE_URL: $VERTEX_SERVICE_URL
+              VERTEX_TRUST_ID: $VERTEX_TRUST_ID
+              SELLER_COMPANY: $SELLER_COMPANY
+              SELLER_STREET: $SELLER_STREET
+              SELLER_CITY: $SELLER_CITY
+              SELLER_DIVISION: $SELLER_DIVISION
+              SELLER_POSTAL_CODE: $SELLER_POSTAL_CODE
+              SELLER_COUNTRY: $SELLER_COUNTRY
+              VERTEX_TAX_CLASS_MAPPING: $VERTEX_TAX_CLASS_MAPPING
+              COMMERCE_WEBACTION_GRAPH_QL_URL: graphql
+              ZONOS_API_KEY: $ZONOS_API_KEY
+              ZONOS_API_URL: $ZONOS_API_URL
+              ZONOS_SHIPPING_METHODS: $ZONOS_SHIPPING_METHODS
+              COMMERCE_BASE_URL: $COMMERCE_BASE_URL
+              OAUTH_CLIENT_ID: $OAUTH_CLIENT_ID
+              OAUTH_CLIENT_SECRETS: $OAUTH_CLIENT_SECRETS
+              OAUTH_TECHNICAL_ACCOUNT_ID: $OAUTH_TECHNICAL_ACCOUNT_ID
+              OAUTH_TECHNICAL_ACCOUNT_EMAIL: $OAUTH_TECHNICAL_ACCOUNT_EMAIL
+              OAUTH_IMS_ORG_ID: $OAUTH_IMS_ORG_ID
+              OAUTH_SCOPES: $OAUTH_SCOPES
+              AIO_CLI_ENV: $AIO_CLI_ENV
+              TAX_EXEMPT_CLASSES: $TAX_EXEMPT_CLASSES
+            annotations:
+              raw-http: true
+              require-adobe-auth: false
+              final: true
+          shipping-method:
+            function: actions/commerce/webhook/shipping/index.js
+            web: 'raw'
+            runtime: nodejs:22
+            inputs:
+              LOG_LEVEL: debug
+              COMMERCE_WEBHOOKS_PUBLIC_KEY: $COMMERCE_WEBHOOKS_PUBLIC_KEY
+              SERVICE_DOMAIN: $UPS_SERVICE_DOMAIN
+              CLIENT_ID: $UPS_CLIENT_ID
+              CLIENT_SECRET: $UPS_CLIENT_SECRET
+              REQUEST_OPTION: 3
+              COMMERCE_BASE_URL: $COMMERCE_BASE_URL
+              CARRIER_CODE: $CARRIER_CODE
+              SHIPPING_METHOD_CODE: $SHIPPING_METHOD_CODE
+              SHIPPING_METHOD_TITLE: $SHIPPING_METHOD_TITLE
+              CUSTOMER_GROUP_CODE: $CUSTOMER_GROUP_CODE
+              PO_FEDEX_CUSTOMER_GROUP: $PO_FEDEX_CUSTOMER_GROUP
+              OAUTH_CLIENT_ID: $OAUTH_CLIENT_ID
+              OAUTH_CLIENT_SECRETS: $OAUTH_CLIENT_SECRETS
+              OAUTH_TECHNICAL_ACCOUNT_ID: $OAUTH_TECHNICAL_ACCOUNT_ID
+              OAUTH_TECHNICAL_ACCOUNT_EMAIL: $OAUTH_TECHNICAL_ACCOUNT_EMAIL
+              OAUTH_IMS_ORG_ID: $OAUTH_IMS_ORG_ID
+              OAUTH_SCOPES: $OAUTH_SCOPES
+              AIO_CLI_ENV: $AIO_CLI_ENV
+              WAREHOUSE_PICKUP_METHOD_CODE: $WAREHOUSE_PICKUP_METHOD_CODE
+              WAREHOUSE_PICKUP_METHOD_TITLE: $WAREHOUSE_PICKUP_METHOD_TITLE
+              WAREHOUSE_PICKUP_CARRIER_CODE: $WAREHOUSE_PICKUP_CARRIER_CODE
+              FEDEX_CODE: $FEDEX_CODE
+              FEDEX_METHODS: $FEDEX_METHODS
+              FEDEX_SHIPPING_PRODUCT_PRICE: $FEDEX_SHIPPING_PRODUCT_PRICE
+              UPS_RATE_ENDPOINT: $UPS_RATE_ENDPOINT
+              UPS_STATE_CODE: $UPS_STATE_CODE
+              UPS_POSTAL_CODE: $UPS_POSTAL_CODE
+              UPS_COUNTRY_CODE: $UPS_COUNTRY_CODE
+              UPS_CARRIER_CODE: $UPS_CARRIER_CODE
+              UPS_DIMENSIONS_UNIT_OF_MEASUREMENT_DESCRIPTION: $UPS_DIMENSIONS_UNIT_OF_MEASUREMENT_DESCRIPTION
+              UPS_DIMENSIONS_UNIT_OF_MEASUREMENT_CODE: $UPS_DIMENSIONS_UNIT_OF_MEASUREMENT_CODE
+              UPS_PACKAGE_UNIT_OF_MEASUREMENT: $UPS_PACKAGE_UNIT_OF_MEASUREMENT
+              UPS_DOMESTIC_PAY_PERCENTAGE: $UPS_DOMESTIC_PAY_PERCENTAGE
+              UPS_INTERNATIONAL_PAY_PERCENTAGE: $UPS_INTERNATIONAL_PAY_PERCENTAGE
+              SP_UPS_NAME: $SP_UPS_NAME
+              SP_UPS_RATE_ENDPOINT: $SP_UPS_RATE_ENDPOINT
+            annotations:
+              raw-http: true
+              require-adobe-auth: false
+              final: true
+          validate-payment:
+            function: actions/commerce/webhook/payment/validate.js
+            web: 'raw'
+            runtime: nodejs:22
+            inputs:
+              LOG_LEVEL: debug
+              COMMERCE_WEBHOOKS_PUBLIC_KEY: $COMMERCE_WEBHOOKS_PUBLIC_KEY
+              TRANSACTION_KEY: $TRANSACTION_KEY
+              API_LOGIN_ID: $API_LOGIN_ID
+              AUTHORIZENET_PAYMENT_METHOD: $AUTHORIZENET_PAYMENT_METHOD
+              TRANSACTION_ENVIRONMENT: $TRANSACTION_ENVIRONMENT
+              COMMERCE_GRAPHQL_BASE_URL: $COMMERCE_GRAPHQL_BASE_URL
+              AUTH_TRANSACTION_LOG: $AUTH_TRANSACTION_LOG
+            annotations:
+              raw-http: true
+              require-adobe-auth: false
+              final: true
+          gift-card-redeem:
+            function: actions/commerce/webhook/gift-card/redeem/index.js
+            web: 'raw'
+            runtime: nodejs:22
+            inputs:
+              LOG_LEVEL: debug
+              COMMERCE_WEBHOOKS_PUBLIC_KEY: $COMMERCE_WEBHOOKS_PUBLIC_KEY
+              OAUTH_CLIENT_ID: $OAUTH_CLIENT_ID
+              OAUTH_CLIENT_SECRETS: $OAUTH_CLIENT_SECRETS
+              OAUTH_TECHNICAL_ACCOUNT_ID: $OAUTH_TECHNICAL_ACCOUNT_ID
+              OAUTH_TECHNICAL_ACCOUNT_EMAIL: $OAUTH_TECHNICAL_ACCOUNT_EMAIL
+              OAUTH_IMS_ORG_ID: $OAUTH_IMS_ORG_ID
+              OAUTH_SCOPES: $OAUTH_SCOPES
+              AIO_CLI_ENV: $AIO_CLI_ENV
+              COMMERCE_GRAPHQL_BASE_URL: $COMMERCE_GRAPHQL_BASE_URL
+              COMMERCE_BASE_URL: $COMMERCE_BASE_URL
+            annotations:
+              raw-http: true
+              require-adobe-auth: false
+              final: true
+          remove-discounts:
+            function: actions/commerce/webhook/cart/discounts/index.js
+            web: 'raw'
+            runtime: nodejs:22
+            inputs:
+              LOG_LEVEL: debug
+              COMMERCE_WEBHOOKS_PUBLIC_KEY: $COMMERCE_WEBHOOKS_PUBLIC_KEY
+              OAUTH_CLIENT_ID: $OAUTH_CLIENT_ID
+              OAUTH_CLIENT_SECRETS: $OAUTH_CLIENT_SECRETS
+              OAUTH_TECHNICAL_ACCOUNT_ID: $OAUTH_TECHNICAL_ACCOUNT_ID
+              OAUTH_TECHNICAL_ACCOUNT_EMAIL: $OAUTH_TECHNICAL_ACCOUNT_EMAIL
+              OAUTH_IMS_ORG_ID: $OAUTH_IMS_ORG_ID
+              OAUTH_SCOPES: $OAUTH_SCOPES
+              AIO_CLI_ENV: $AIO_CLI_ENV
+              COMMERCE_BASE_URL: $COMMERCE_BASE_URL
+            annotations:
+              raw-http: true
+              require-adobe-auth: false
+              final: true
+      account-ssologin:
+        license: Apache-2.0
+        actions:
+          consumer:
+            function: actions/account/ssologin.js
+            web: 'yes'
+            runtime: nodejs:22
+            inputs:
+              LOG_LEVEL: debug
+              OAUTH_CLIENT_ID: $OAUTH_CLIENT_ID
+              OAUTH_CLIENT_SECRETS: $OAUTH_CLIENT_SECRETS
+              OAUTH_TECHNICAL_ACCOUNT_ID: $OAUTH_TECHNICAL_ACCOUNT_ID
+              OAUTH_TECHNICAL_ACCOUNT_EMAIL: $OAUTH_TECHNICAL_ACCOUNT_EMAIL
+              OAUTH_IMS_ORG_ID: $OAUTH_IMS_ORG_ID
+              OAUTH_SCOPES: $OAUTH_SCOPES
+              AIO_CLI_ENV: $AIO_CLI_ENV
+              COMMERCE_WEBHOOKS_PUBLIC_KEY: $COMMERCE_WEBHOOKS_PUBLIC_KEY
+              COMMERCE_GRAPHQL_BASE_URL: $COMMERCE_GRAPHQL_BASE_URL
+              CREATE_CUSTOMER_PASSWORD: $CREATE_CUSTOMER_PASSWORD
+              CUSTOMER_GROUP_ID: $CUSTOMER_GROUP_ID
+              COMMERCE_BASE_URL: $COMMERCE_BASE_URL
+              SSO_USERINFO_URL: $SSO_USERINFO_URL
+            annotations:
+              require-adobe-auth: false
+              final: true
+      commerce-events:
+        license: Apache-2.0
+        actions:
+          $include: ./actions/commerce/events/order/actions.config.yaml
+          erp-order-status:
+            function: actions/commerce/events/order/status/index.js
+            web: 'no'
+            runtime: nodejs:22
+            inputs:
+              LOG_LEVEL: debug
+              ERP_ORDER_STATUS_ENDPOINT: $ERP_ORDER_STATUS_ENDPOINT
+              ERP_AUTH_TOKEN: $ERP_AUTH_TOKEN
+              OAUTH_CLIENT_ID: $OAUTH_CLIENT_ID
+              OAUTH_CLIENT_SECRETS: $OAUTH_CLIENT_SECRETS
+              OAUTH_TECHNICAL_ACCOUNT_ID: $OAUTH_TECHNICAL_ACCOUNT_ID
+              OAUTH_TECHNICAL_ACCOUNT_EMAIL: $OAUTH_TECHNICAL_ACCOUNT_EMAIL
+              OAUTH_IMS_ORG_ID: $OAUTH_IMS_ORG_ID
+              OAUTH_SCOPES: $OAUTH_SCOPES
+              AIO_CLI_ENV: $AIO_CLI_ENV
+              COMMERCE_GRAPHQL_BASE_URL: $COMMERCE_GRAPHQL_BASE_URL
+              COMMERCE_BASE_URL: $COMMERCE_BASE_URL
+              PAGE_SIZE: $PAGE_SIZE
+              ORDER_ID_PREFIX: $ORDER_ID_PREFIX
+            annotations:
+              require-adobe-auth: false
+              final: true
+          create-invoice:
+            function: actions/commerce/events/order/invoice/index.js
+            web: 'no'
+            runtime: nodejs:22
+            inputs:
+              LOG_LEVEL: debug
+              OAUTH_CLIENT_ID: $OAUTH_CLIENT_ID
+              OAUTH_CLIENT_SECRETS: $OAUTH_CLIENT_SECRETS
+              OAUTH_TECHNICAL_ACCOUNT_ID: $OAUTH_TECHNICAL_ACCOUNT_ID
+              OAUTH_TECHNICAL_ACCOUNT_EMAIL: $OAUTH_TECHNICAL_ACCOUNT_EMAIL
+              OAUTH_IMS_ORG_ID: $OAUTH_IMS_ORG_ID
+              OAUTH_SCOPES: $OAUTH_SCOPES
+              AIO_CLI_ENV: $AIO_CLI_ENV
+              COMMERCE_BASE_URL: $COMMERCE_BASE_URL
+              PAYMENT_METHODS_FOR_INVOICE_CREATION: $PAYMENT_METHODS_FOR_INVOICE_CREATION
+              AUTHORIZENET_PAYMENT_METHOD: $AUTHORIZENET_PAYMENT_METHOD
+            annotations:
+              final: true
+          add-cost-center:
+            function: actions/commerce/events/order/fed-ex/index.js
+            web: 'no'
+            runtime: nodejs:22
+            inputs:
+              LOG_LEVEL: debug
+              OAUTH_CLIENT_ID: $OAUTH_CLIENT_ID
+              OAUTH_CLIENT_SECRETS: $OAUTH_CLIENT_SECRETS
+              OAUTH_TECHNICAL_ACCOUNT_ID: $OAUTH_TECHNICAL_ACCOUNT_ID
+              OAUTH_TECHNICAL_ACCOUNT_EMAIL: $OAUTH_TECHNICAL_ACCOUNT_EMAIL
+              OAUTH_IMS_ORG_ID: $OAUTH_IMS_ORG_ID
+              OAUTH_SCOPES: $OAUTH_SCOPES
+              AIO_CLI_ENV: $AIO_CLI_ENV
+              COMMERCE_BASE_URL: $COMMERCE_BASE_URL
+              FEDEX_METHODS: $FEDEX_METHODS
+              FEDEX_CODE: $FEDEX_CODE
+            annotations:
+              final: true
+          hello:
+            function: actions/commerce/events/hello.js
+            web: 'no'
+            runtime: nodejs:22
+            inputs:
+              LOG_LEVEL: debug
+            annotations:
+              require-adobe-auth: false
+              final: true
+        triggers:
+          every15Minute:
+            feed: /whisk.system/alarms/interval
+            inputs:
+              minutes: 15
+        rules:
+          every15MinuteRuleForErp:
+            trigger: every15Minute
+            action: erp-order-status
+      customer:
+        license: Apache-2.0
+        actions:
+          group:
+            function: actions/commerce/customer/group/index.js
+            web: 'yes'
+            runtime: nodejs:22
+            inputs:
+              LOG_LEVEL: debug
+              OAUTH_CLIENT_ID: $OAUTH_CLIENT_ID
+              OAUTH_CLIENT_SECRETS: $OAUTH_CLIENT_SECRETS
+              OAUTH_TECHNICAL_ACCOUNT_ID: $OAUTH_TECHNICAL_ACCOUNT_ID
+              OAUTH_TECHNICAL_ACCOUNT_EMAIL: $OAUTH_TECHNICAL_ACCOUNT_EMAIL
+              OAUTH_IMS_ORG_ID: $OAUTH_IMS_ORG_ID
+              OAUTH_SCOPES: $OAUTH_SCOPES
+              AIO_CLI_ENV: $AIO_CLI_ENV
+              COMMERCE_WEBHOOKS_PUBLIC_KEY: $COMMERCE_WEBHOOKS_PUBLIC_KEY
+              COMMERCE_GRAPHQL_BASE_URL: $COMMERCE_GRAPHQL_BASE_URL
+              COMMERCE_BASE_URL: $COMMERCE_BASE_URL
+            annotations:
+              require-adobe-auth: false
+              final: true
+          get-group-name:
+            function: actions/commerce/customer/group-name/index.js
+            web: 'yes'
+            runtime: nodejs:22
+            inputs:
+              LOG_LEVEL: debug
+              OAUTH_CLIENT_ID: $OAUTH_CLIENT_ID
+              OAUTH_CLIENT_SECRETS: $OAUTH_CLIENT_SECRETS
+              OAUTH_TECHNICAL_ACCOUNT_ID: $OAUTH_TECHNICAL_ACCOUNT_ID
+              OAUTH_TECHNICAL_ACCOUNT_EMAIL: $OAUTH_TECHNICAL_ACCOUNT_EMAIL
+              OAUTH_IMS_ORG_ID: $OAUTH_IMS_ORG_ID
+              OAUTH_SCOPES: $OAUTH_SCOPES
+              AIO_CLI_ENV: $AIO_CLI_ENV
+              COMMERCE_BASE_URL: $COMMERCE_BASE_URL
+            annotations:
+              require-adobe-auth: false
+              final: true
+          $include: ./actions/commerce/customer/contact-us/actions.config.yaml
+      product:
+        license: Apache-2.0
+        actions:
+          stock:
+            function: actions/commerce/product/stock/index.js
+            web: 'yes'
+            runtime: nodejs:22
+            inputs:
+              LOG_LEVEL: debug
+              OAUTH_CLIENT_ID: $OAUTH_CLIENT_ID
+              OAUTH_CLIENT_SECRETS: $OAUTH_CLIENT_SECRETS
+              OAUTH_TECHNICAL_ACCOUNT_ID: $OAUTH_TECHNICAL_ACCOUNT_ID
+              OAUTH_TECHNICAL_ACCOUNT_EMAIL: $OAUTH_TECHNICAL_ACCOUNT_EMAIL
+              OAUTH_IMS_ORG_ID: $OAUTH_IMS_ORG_ID
+              OAUTH_SCOPES: $OAUTH_SCOPES
+              AIO_CLI_ENV: $AIO_CLI_ENV
+              COMMERCE_WEBHOOKS_PUBLIC_KEY: $COMMERCE_WEBHOOKS_PUBLIC_KEY
+              COMMERCE_GRAPHQL_BASE_URL: $COMMERCE_GRAPHQL_BASE_URL
+              COMMERCE_BASE_URL: $COMMERCE_BASE_URL
+            annotations:
+              require-adobe-auth: false
+              final: true
+      inventory-update:
+        license: Apache-2.0
+        actions:
+          bulk-update:
+            function: actions/commerce/inventory/index.js
+            web: 'no'
+            runtime: nodejs:22
+            inputs:
+              LOG_LEVEL: debug
+              SFTP_USERNAME: $SFTP_USERNAME
+              SFTP_PASSWORD: $SFTP_PASSWORD
+              SFTP_HOST: $SFTP_HOST
+              FILE_NAME: $FILE_NAME
+              SFTP_REMOTE_DIR: $SFTP_REMOTE_DIR
+              COMMERCE_BASE_URL: $COMMERCE_BASE_URL
+              OAUTH_CLIENT_ID: $OAUTH_CLIENT_ID
+              OAUTH_CLIENT_SECRETS: $OAUTH_CLIENT_SECRETS
+              OAUTH_TECHNICAL_ACCOUNT_ID: $OAUTH_TECHNICAL_ACCOUNT_ID
+              OAUTH_TECHNICAL_ACCOUNT_EMAIL: $OAUTH_TECHNICAL_ACCOUNT_EMAIL
+              OAUTH_IMS_ORG_ID: $OAUTH_IMS_ORG_ID
+              OAUTH_SCOPES: $OAUTH_SCOPES
+              AIO_CLI_ENV: $AIO_CLI_ENV
+            annotations:
+              final: true
+              require-adobe-auth: false
+        triggers:
+          inventoryBulkUpdate:
+            feed: /whisk.system/alarms/alarm
+            inputs:
+              cron: '0 1 * * *'
+        rules:
+          inventoryBulkUpdateRule:
+            trigger: inventoryBulkUpdate
+            action: bulk-update
