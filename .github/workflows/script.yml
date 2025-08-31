@@ -1,4 +1,4 @@
-name: Run Scripts and Deploy
+name: Run Scripts and Trigger Deployment
 
 on:
   push:
@@ -20,7 +20,6 @@ jobs:
   run-scripts:
     name: Run Configuration Scripts
     runs-on: ubuntu-latest
-    environment: ${{ github.event_name == 'workflow_dispatch' && inputs.environment || github.ref_name }}
     strategy:
       matrix:
         node-version: ['22']
@@ -30,7 +29,7 @@ jobs:
       
       - name: Echo Environment
         run: |
-          echo "Environment being used: ${{ github.event_name == 'workflow_dispatch' && inputs.environment || github.ref_name }}"
+          echo "Environment being used: ${{ github.event_name == 'workflow_dispatch' && inputs.environment || (github.ref_name) }}"
           echo "Event name: ${{ github.event_name }}"
           echo "Branch name: ${{ github.ref_name }}"
           echo "Manual environment input: ${{ inputs.environment || 'N/A' }}"
@@ -39,12 +38,35 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: ${{ matrix.node-version }}
+      - name: Cache node modules
+        id: cache-npm
+        uses: actions/cache@v4
+        env:
+          cache-name: cache-node-modules
+          environment: ${{ github.event_name == 'workflow_dispatch' && inputs.environment || (github.ref_name == 'stage' && 'stage' || (github.ref_name == 'prod' && 'prod')) }}
+        with:
+          path: |
+            ~/.npm
+            node_modules
+          key: ${{ runner.os }}-${{ env.cache-name }}-${{ env.environment }}-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-${{ env.cache-name }}-${{ env.environment }}-
+            ${{ runner.os }}-${{ env.cache-name }}-
+      - name: Debug - Node Info
+        run: |
+          echo "Node version: $(node --version)"
+          echo "NPM version: $(npm --version)"
+      - if: ${{ steps.cache-npm.outputs.cache-hit != 'true' }}
+        name: Install Dependencies
+        run: |
+          npm ci --prefer-offline
+          npm list --depth=0
       - name: Cache run scripts results
         id: cache-scripts
         uses: actions/cache@v4
         env:
           cache-name: cache-run-scripts
-          environment: ${{ github.event_name == 'workflow_dispatch' && inputs.environment || github.ref_name }}
+          environment: ${{ github.event_name == 'workflow_dispatch' && inputs.environment || (github.ref_name == 'stage' && 'stage' || (github.ref_name == 'prod' && 'prod')) }}
         with:
           path: |
             .scripts-cache
@@ -76,7 +98,7 @@ jobs:
           AIO_CLI_ENV: ${{ (github.ref_name == 'prod' || (github.event_name == 'workflow_dispatch' && inputs.environment == 'prod')) && vars.AIO_CLI_ENV_PROD || 'prod' }}
           COMMERCE_BASE_URL: ${{ (github.ref_name == 'prod' || (github.event_name == 'workflow_dispatch' && inputs.environment == 'prod')) && secrets.COMMERCE_BASE_URL_PROD || secrets.COMMERCE_BASE_URL_STAGE }}
   deploy:
-    name: Trigger Deployment
+    name: Trigger Deployment to Stage
     needs: run-scripts
     runs-on: ubuntu-latest
     permissions:
@@ -96,8 +118,17 @@ jobs:
             });
             console.log('Triggered stage deployment workflow');
 
+  deploy-prod:
+    name: Deploy to Production (Requires Approval)
+    needs: run-scripts
+    runs-on: ubuntu-latest
+    if: ${{ github.ref_name == 'prod' || (github.event_name == 'workflow_dispatch' && inputs.environment == 'prod') }}
+    environment: prod
+    permissions:
+      actions: write
+      contents: read
+    steps:
       - name: Trigger Production Deployment
-        if: ${{ github.ref_name == 'prod' || (github.event_name == 'workflow_dispatch' && inputs.environment == 'prod') }}
         uses: actions/github-script@v7
         with:
           script: |
@@ -107,6 +138,4 @@ jobs:
               workflow_id: 'deploy-prod.yml',
               ref: 'prod'
             });
-            console.log('Triggered production deployment workflow');
-
-
+            console.log('Triggered production deployment workflow after approval');
