@@ -3,7 +3,8 @@ name: Run Scripts and Deploy
 on:
   push:
     branches:
-      - stage2
+      - stage
+      - prod
   workflow_dispatch:
     inputs:
       environment:
@@ -19,7 +20,7 @@ jobs:
   run-scripts:
     name: Run Configuration Scripts
     runs-on: ubuntu-latest
-    environment: ${{ github.event_name == 'workflow_dispatch' && inputs.environment || 'stage' }}
+    environment: ${{ github.event_name == 'workflow_dispatch' && inputs.environment || github.ref_name }}
     strategy:
       matrix:
         node-version: ['22']
@@ -31,39 +32,17 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: ${{ matrix.node-version }}
-      
-      # - name: Cache node modules
-      #   id: cache-npm
-      #   uses: actions/cache@v4
-      #   env:
-      #     cache-name: cache-node-modules
-      #   with:
-      #     path: |
-      #       ~/.npm
-      #       node_modules
-      #     key: ${{ runner.os }}-${{ env.cache-name }}-scripts-${{ hashFiles('**/package-lock.json') }}
-      #     restore-keys: |
-      #       ${{ runner.os }}-${{ env.cache-name }}-scripts-
-      #       ${{ runner.os }}-${{ env.cache-name }}-
-      
-      # - name: Cache run scripts results
-      #   id: cache-scripts
-      #   uses: actions/cache@v4
-      #   env:
-      #     cache-name: cache-run-scripts
-      #   with:
-      #     path: |
-      #       .scripts-cache
-      #     key: ${{ runner.os }}-${{ env.cache-name }}-${{ (github.event_name == 'workflow_dispatch' && inputs.environment == 'prod') && 'prod' || 'stage' }}-${{ hashFiles('scripts/**', 'package-lock.json') }}
-      #     restore-keys: |
-      #       ${{ runner.os }}-${{ env.cache-name }}-${{ (github.event_name == 'workflow_dispatch' && inputs.environment == 'prod') && 'prod' || 'stage' }}-
-      
-      # - name: Install Dependencies
-      #   if: ${{ steps.cache-npm.outputs.cache-hit != 'true' }}
-      #   run: |
-      #     npm ci --prefer-offline
-      #     npm list --depth=0
-      
+      - name: Cache run scripts results
+        id: cache-scripts
+        uses: actions/cache@v4
+        env:
+          cache-name: cache-run-scripts
+        with:
+          path: |
+            .scripts-cache
+          key: ${{ runner.os }}-${{ env.cache-name }}-${{ github.ref_name }}-${{ hashFiles('scripts/**') }}
+          restore-keys: |
+            ${{ runner.os }}-${{ env.cache-name }}-${{ github.ref_name }}-
       - name: Skip Scripts (Cache Hit)
         if: ${{ steps.cache-scripts.outputs.cache-hit == 'true' }}
         run: |
@@ -77,28 +56,28 @@ jobs:
           npm run create-payment-methods
           # Create cache marker file
           mkdir -p .scripts-cache
+          echo "branch: ${github.ref_name}" > .scripts-cache/completed.txt
           echo "Scripts completed at $(date)" > .scripts-cache/completed.txt
         env:
-          # Use existing _STAGE/_PROD suffixed secrets
-          OAUTH_CLIENT_ID: ${{ (github.event_name == 'workflow_dispatch' && inputs.environment == 'prod') && secrets.OAUTH_CLIENT_ID_PROD || secrets.CLIENTID_STAGE }}
-          OAUTH_CLIENT_SECRETS: ${{ (github.event_name == 'workflow_dispatch' && inputs.environment == 'prod') && secrets.OAUTH_CLIENT_SECRETS_PROD || secrets.OAUTH_CLIENT_SECRETS_STAGE }}
-          OAUTH_TECHNICAL_ACCOUNT_ID: ${{ (github.event_name == 'workflow_dispatch' && inputs.environment == 'prod') && secrets.OAUTH_TECHNICAL_ACCOUNT_ID_PROD || secrets.TECHNICALACCID_STAGE }}
-          OAUTH_TECHNICAL_ACCOUNT_EMAIL: ${{ (github.event_name == 'workflow_dispatch' && inputs.environment == 'prod') && secrets.OAUTH_TECHNICAL_ACCOUNT_EMAIL_PROD || secrets.TECHNICALACCEMAIL_STAGE }}
-          OAUTH_IMS_ORG_ID: ${{ (github.event_name == 'workflow_dispatch' && inputs.environment == 'prod') && secrets.OAUTH_IMS_ORG_ID_PROD || secrets.AIO_PROJECT_IMS_ORG_ID_STAGE }}
-          OAUTH_SCOPES: ${{ (github.event_name == 'workflow_dispatch' && inputs.environment == 'prod') && secrets.OAUTH_SCOPES_PROD || secrets.OAUTH_SCOPES_STAGE }}
-          AIO_CLI_ENV: ${{ (github.event_name == 'workflow_dispatch' && inputs.environment == 'prod') && vars.AIO_CLI_ENV_PROD || 'prod' }}
-          COMMERCE_BASE_URL: ${{ (github.event_name == 'workflow_dispatch' && inputs.environment == 'prod') && secrets.COMMERCE_BASE_URL_PROD || secrets.COMMERCE_BASE_URL_STAGE }}
+          # Use branch-based or manual environment selection for credentials
+          OAUTH_CLIENT_ID: ${{ (github.ref_name == 'prod' || (github.event_name == 'workflow_dispatch' && inputs.environment == 'prod')) && secrets.OAUTH_CLIENT_ID_PROD || secrets.CLIENTID_STAGE }}
+          OAUTH_CLIENT_SECRETS: ${{ (github.ref_name == 'prod' || (github.event_name == 'workflow_dispatch' && inputs.environment == 'prod')) && secrets.OAUTH_CLIENT_SECRETS_PROD || secrets.OAUTH_CLIENT_SECRETS_STAGE }}
+          OAUTH_TECHNICAL_ACCOUNT_ID: ${{ (github.ref_name == 'prod' || (github.event_name == 'workflow_dispatch' && inputs.environment == 'prod')) && secrets.OAUTH_TECHNICAL_ACCOUNT_ID_PROD || secrets.TECHNICALACCID_STAGE }}
+          OAUTH_TECHNICAL_ACCOUNT_EMAIL: ${{ (github.ref_name == 'prod' || (github.event_name == 'workflow_dispatch' && inputs.environment == 'prod')) && secrets.OAUTH_TECHNICAL_ACCOUNT_EMAIL_PROD || secrets.TECHNICALACCEMAIL_STAGE }}
+          OAUTH_IMS_ORG_ID: ${{ (github.ref_name == 'prod' || (github.event_name == 'workflow_dispatch' && inputs.environment == 'prod')) && secrets.OAUTH_IMS_ORG_ID_PROD || secrets.IMSORGID_STAGE }}
+          OAUTH_SCOPES: ${{ (github.ref_name == 'prod' || (github.event_name == 'workflow_dispatch' && inputs.environment == 'prod')) && secrets.OAUTH_SCOPES_PROD || secrets.OAUTH_SCOPES_STAGE }}
+          AIO_CLI_ENV: ${{ (github.ref_name == 'prod' || (github.event_name == 'workflow_dispatch' && inputs.environment == 'prod')) && vars.AIO_CLI_ENV_PROD || 'prod' }}
+          COMMERCE_BASE_URL: ${{ (github.ref_name == 'prod' || (github.event_name == 'workflow_dispatch' && inputs.environment == 'prod')) && secrets.COMMERCE_BASE_URL_PROD || secrets.COMMERCE_BASE_URL_STAGE }}
   deploy:
     name: Trigger Deployment
     needs: run-scripts
     runs-on: ubuntu-latest
-    if: github.event_name == 'workflow_dispatch'
     permissions:
       actions: write
       contents: read
     steps:
       - name: Trigger Stage Deployment
-        if: ${{ inputs.environment == 'stage' }}
+        if: ${{ github.ref_name == 'stage' || (github.event_name == 'workflow_dispatch' && inputs.environment == 'stage') }}
         uses: actions/github-script@v7
         with:
           script: |
@@ -111,7 +90,7 @@ jobs:
             console.log('Triggered stage deployment workflow');
 
       - name: Trigger Production Deployment
-        if: ${{ inputs.environment == 'prod' }}
+        if: ${{ github.ref_name == 'prod' || (github.event_name == 'workflow_dispatch' && inputs.environment == 'prod') }}
         uses: actions/github-script@v7
         with:
           script: |
@@ -123,18 +102,4 @@ jobs:
             });
             console.log('Triggered production deployment workflow');
 
-  ask-for-deployment:
-    name: Request Deployment Environment
-    needs: run-scripts
-    runs-on: ubuntu-latest
-    if: github.event_name == 'push'
-    steps:
-      - name: Manual Deployment Required
-        run: |
-          echo "Scripts completed successfully!"
-          echo "To deploy, manually trigger this workflow with:"
-          echo "- Go to Actions tab"
-          echo "- Select 'Run Scripts and Deploy' workflow"
-          echo "- Click 'Run workflow'"
-          echo "- Choose environment: stage or prod"
-          echo "- Click 'Run workflow' button"
+

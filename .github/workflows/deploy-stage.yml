@@ -1,9 +1,7 @@
 name: AppBuilder Test Deployment
 
 on:
-  push:
-    branches:
-      - stage
+  workflow_dispatch:
   # workflow_run:
   #   workflows: [Run Scripts and Deploy]
   #   types:
@@ -25,33 +23,6 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: ${{ matrix.node-version }}
-      # - name: Cache node modules
-      #   id: cache-npm
-      #   uses: actions/cache@v4
-      #   env:
-      #     cache-name: cache-node-modules
-      #   with:
-      #     path: |
-      #       ~/.npm
-      #       node_modules
-      #     key: ${{ runner.os }}-${{ env.cache-name }}-stage-${{ hashFiles('**/package-lock.json') }}
-      #     restore-keys: |
-      #       ${{ runner.os }}-${{ env.cache-name }}-stage-
-      #       ${{ runner.os }}-${{ env.cache-name }}-
-      # - name: Debug - Node Info
-      #   run: |
-      #     echo "Node version: $(node --version)"
-      #     echo "NPM version: $(npm --version)"
-      # - if: ${{ steps.cache-npm.outputs.cache-hit != 'true' }}
-      #   name: Install Dependencies
-      #   run: |
-      #     npm ci --prefer-offline
-      #     npm list --depth=0
-      # - name: Setup CLI
-      #   uses: adobe/aio-cli-setup-action@1.3.0
-      #   with:
-      #     os: ${{ matrix.os }}
-      #     version: 10.x.x
       - if: ${{ steps.cache-npm.outputs.cache-hit != 'true' }}
         name: Install Dependencies
         run: |
@@ -73,70 +44,6 @@ jobs:
           TECHNICALACCOUNTEMAIL: ${{ secrets.TECHNICALACCEMAIL_STAGE }}
           IMSORGID: ${{ secrets.IMSORGID_STAGE }}
           SCOPES: ${{ secrets.SCOPES_STAGE }}
-      - name: Cache run scripts results
-        id: cache-scripts
-        uses: actions/cache@v4
-        env:
-          cache-name: cache-run-scripts
-        with:
-          path: |
-            .scripts-cache
-          key: ${{ runner.os }}-${{ env.cache-name }}-stage-${{ hashFiles('scripts/**') }}
-          restore-keys: |
-            ${{ runner.os }}-${{ env.cache-name }}-stage-
-      
-      - name: Skip Scripts (Cache Hit)
-        if: ${{ steps.cache-scripts.outputs.cache-hit == 'true' }}
-        run: |
-          echo "Scripts already completed - skipping due to cache hit"
-          cat .scripts-cache/completed.txt || echo "Cache marker found"
-      
-      - name: Run Scripts (Cache Miss)
-        if: ${{ steps.cache-scripts.outputs.cache-hit != 'true' }}
-        run: |
-          npm run create-shipping-carriers
-          npm run create-payment-methods
-          # Create cache marker file
-          mkdir -p .scripts-cache
-          echo "Scripts completed at $(date)" > .scripts-cache/completed.txt
-        env:
-          OAUTH_CLIENT_ID: ${{ secrets.CLIENTID_STAGE }}
-          OAUTH_CLIENT_SECRETS: ${{ secrets.OAUTH_CLIENT_SECRETS_STAGE }}
-          OAUTH_TECHNICAL_ACCOUNT_ID: ${{ secrets.TECHNICALACCID_STAGE }}
-          OAUTH_TECHNICAL_ACCOUNT_EMAIL: ${{ secrets.TECHNICALACCEMAIL_STAGE }}
-          OAUTH_IMS_ORG_ID: ${{ secrets.IMSORGID_STAGE }}
-          OAUTH_SCOPES: ${{ secrets.OAUTH_SCOPES_STAGE }}
-          AIO_CLI_ENV: 'prod'
-          COMMERCE_BASE_URL: ${{ secrets.COMMERCE_BASE_URL_STAGE }}
-      # - name: Build
-      #   env:
-      #     # Deployment/Infrastructure secrets
-      #     AIO_RUNTIME_NAMESPACE: ${{ secrets.AIO_RUNTIME_NAMESPACE_STAGE }}
-      #   uses: adobe/aio-apps-action@3.3.0
-      #   with:
-      #     os: ${{ matrix.os }}
-      #     command: build
-      - name: Node check (vars)
-        shell: bash
-        env:
-          OAUTH_SCOPES: ${{ vars.OAUTH_SCOPES_STAGE }}
-          OAUTH_CLIENT_SECRETS: ${{ vars.OAUTH_CLIENT_SECRETS_STAGE }}
-        run: |
-          node <<'NODE'
-          try {
-            const s = JSON.parse(process.env.OAUTH_SCOPES || "[]");
-            const c = JSON.parse(process.env.OAUTH_CLIENT_SECRETS || "[]");
-            console.log("SCOPES:", s);
-            console.log("CLIENT_SECRETS:", c);
-            console.log("isArray:", Array.isArray(s), Array.isArray(c));
-            console.log("lengths:", s.length, c.length);
-            console.log("JSON ok");
-          } catch (e) {
-            console.error("Parse error:", e.message, "\nRaw OAUTH_SCOPES:", process.env.OAUTH_SCOPES, "\nRaw OAUTH_CLIENT_SECRETS:", process.env.OAUTH_CLIENT_SECRETS);
-            process.exit(1);
-          }
-          NODE
-      # - name: Deploy
         # env:
         #   AIO_RUNTIME_NAMESPACE: ${{ secrets.AIO_RUNTIME_NAMESPACE_STAGE }}
         #   AIO_RUNTIME_AUTH: ${{ secrets.AIO_RUNTIME_AUTH_STAGE }}
