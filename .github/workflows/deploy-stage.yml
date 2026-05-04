@@ -3,7 +3,7 @@ name: AppBuilder Test Deployment
 on:
   push:
     branches:
-      - stage
+      - stage2
   # workflow_run:
   #   workflows: [Run Scripts and Deploy]
   #   types:

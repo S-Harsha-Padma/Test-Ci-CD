@@ -1,0 +1,33 @@
+name: Stage Mesh Deployment
+on:
+  # Manual deployments (allows any branch to be deployed to stage)
+  workflow_dispatch:
+    inputs:
+      branch:
+        description: 'Branch to deploy on stage environment'
+        required: true
+        default: 'stage'
+        type: string
+jobs:
+  deploy:
+    name: Deploy to Stage Mesh
+    runs-on: ${{ matrix.os }}
+    environment: stage
+    strategy:
+      max-parallel: 1
+      matrix:
+        node-version: ['22']
+        os: [ubuntu-latest]
+    steps:
+      - name: Display deployment info
+        run: |
+          echo "Stage Deployment Info:"
+          echo "Triggered by: ${{ github.event_name }}"
+          echo "Branch: ${{ github.event.inputs.branch || github.ref_name }}"
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.inputs.branch || github.ref_name }} 
+      - name: Check
+        if: always()
+        run: echo "Done deploying stage mesh"
