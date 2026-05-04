@@ -10,11 +10,6 @@ on:
         description: 'Type exactly UPDATE_PRODUCTION_MESH to confirm'
         required: true
         type: string
-      branch:
-        description: 'Git branch to read mesh.json from (production should usually be main)'
-        required: true
-        default: 'main'
-        type: string
 
 jobs:
   deploy:
@@ -40,12 +35,12 @@ jobs:
         run: |
           echo "Production API Mesh deployment"
           echo "Triggered by: ${{ github.event_name }}"
-          echo "Branch: ${{ github.event.inputs.branch || github.ref_name }}"
+          echo "Branch: main"
 
       - name: Checkout
         uses: actions/checkout@v4
         with:
-          ref: ${{ github.event.inputs.branch || github.ref_name }}
+          ref: main
 
       - name: Check
         if: always()

@@ -30,4 +30,4 @@ jobs:
           ref: ${{ github.event.inputs.branch || github.ref_name }} 
       - name: Check
         if: always()
-        run: echo "Done deploying stage mesh"
+        run: echo "Done deploying stage mesh from branch main"
