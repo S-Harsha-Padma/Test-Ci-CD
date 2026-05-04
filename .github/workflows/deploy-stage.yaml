@@ -3,7 +3,7 @@ name: AIO App CI/CD Test
 on:
   push:
     branches:
-      - stage
+      - stage1
 jobs:
   deploy:
     name: Deploy to Stage

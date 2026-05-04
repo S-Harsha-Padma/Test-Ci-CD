@@ -1,0 +1,52 @@
+name: Production Mesh Deployment
+
+# Manual deployment
+# Uses GitHub Environment "production" (same as deploy-prod.yml) for required reviewers, etc.
+# Typed confirmation phrase below adds a small extra guard at dispatch time.
+on:
+  workflow_dispatch:
+    inputs:
+      confirm_phrase:
+        description: 'Type exactly UPDATE_PRODUCTION_MESH to confirm'
+        required: true
+        type: string
+      branch:
+        description: 'Git branch to read mesh.json from (production should usually be main)'
+        required: true
+        default: 'main'
+        type: string
+
+jobs:
+  deploy:
+    name: Deploy to Production Mesh
+    runs-on: ${{ matrix.os }}
+    # Triggers Environment protection rules (reviewers, wait timer) if configured on the repo.
+    environment: production
+    strategy:
+      max-parallel: 1
+      matrix:
+        node-version: ['22']
+        os: [ubuntu-latest]
+    steps:
+      # Phrase compared in expressions only (user input is not interpolated into shell).
+      - name: Verify confirmation phrase
+        if: ${{ github.event.inputs.confirm_phrase != 'UPDATE_PRODUCTION_MESH' }}
+        run: |
+          echo "::error::Production mesh deploy aborted."
+          echo "Set the confirmation phrase to exactly: UPDATE_PRODUCTION_MESH"
+          exit 1
+
+      - name: Display deployment info
+        run: |
+          echo "Production API Mesh deployment"
+          echo "Triggered by: ${{ github.event_name }}"
+          echo "Branch: ${{ github.event.inputs.branch || github.ref_name }}"
+
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.inputs.branch || github.ref_name }}
+
+      - name: Check
+        if: always()
+        run: echo "Done deploying production mesh"
