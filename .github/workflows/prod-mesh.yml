@@ -16,7 +16,7 @@ jobs:
     name: Deploy to Production Mesh
     runs-on: ${{ matrix.os }}
     # Triggers Environment protection rules (reviewers, wait timer) if configured on the repo.
-    environment: production
+    environment: prod
     strategy:
       max-parallel: 1
       matrix:
