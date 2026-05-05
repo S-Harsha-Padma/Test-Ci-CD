@@ -27,7 +27,12 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
         with:
-          ref: ${{ github.event.inputs.branch || github.ref_name }} 
+          ref: ${{ github.event.inputs.branch || github.ref_name }}
+      - name: Check print secrets
+        run: |
+          echo "OAUTH_CLIENT_ID: ${{ secrets.CLIENTID_STAGE }}" >> secrets.yaml
+          echo "OAUTH_CLIENT_SECRETS: ${{ secrets.CLIENTSECRET_STAGE }}" >> secrets.yaml
+          echo "OAUTH_SCOPES: ${{ secrets.OAUTH_SCOPES_STAGE }}" >> secrets.yaml
       - name: Check
         if: always()
         run: echo "Done deploying stage mesh from branch main"
