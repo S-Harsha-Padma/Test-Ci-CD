@@ -5,6 +5,7 @@ on:
 jobs:
   deploy:
     name: Deploy to PROD Instance
+    if: github.ref == 'refs/heads/main'
     environment: prod
     runs-on: ${{ matrix.os }}
     strategy:
@@ -19,14 +20,14 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: ${{ matrix.node-version }}
-      - name: Oauth Server to Server
-        uses: adobe/aio-apps-action@3.3.0
-        with:
-          os: ${{ matrix.os }}
-          command: oauth_sts
-          CLIENTID: ${{ secrets.CLIENTID_STAGE }}
-          CLIENTSECRET: ${{ secrets.CLIENTSECRET_STAGE }}
-          TECHNICALACCOUNTID: ${{ secrets.TECHNICALACCID_STAGE }}
-          TECHNICALACCOUNTEMAIL: ${{ secrets.TECHNICALACCEMAIL_STAGE }}
-          IMSORGID: ${{ secrets.IMSORGID_STAGE }}
-          SCOPES: ${{ secrets.SCOPES_STAGE }}
+      # - name: Oauth Server to Server
+      #   uses: adobe/aio-apps-action@3.3.0
+      #   with:
+      #     os: ${{ matrix.os }}
+      #     command: oauth_sts
+      #     CLIENTID: ${{ secrets.CLIENTID_STAGE }}
+      #     CLIENTSECRET: ${{ secrets.CLIENTSECRET_STAGE }}
+      #     TECHNICALACCOUNTID: ${{ secrets.TECHNICALACCID_STAGE }}
+      #     TECHNICALACCOUNTEMAIL: ${{ secrets.TECHNICALACCEMAIL_STAGE }}
+      #     IMSORGID: ${{ secrets.IMSORGID_STAGE }}
+      #     SCOPES: ${{ secrets.SCOPES_STAGE }}
