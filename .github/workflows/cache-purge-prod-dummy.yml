@@ -13,6 +13,8 @@ jobs:
     runs-on: ubuntu-latest
     environment: production
     steps:
+      - name: Disclaimer
+        run: echo "This clears entire mesh cache, causes temporary performance hit, should be avoided during peak production hours"
       - name: Verify confirmation phrase
         if: ${{ github.event.inputs.confirm_phrase != 'PURGE_CACHE_PRODUCTION_MESH_Dummy' }}
         run: |
