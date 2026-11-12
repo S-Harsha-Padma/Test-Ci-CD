@@ -1,0 +1,14 @@
+name: Purge Stage Mesh Cache Dummy
+on:
+  workflow_dispatch:
+jobs:
+  purge:
+    name: Purge Stage Mesh Cache Dummy
+    if: github.ref == 'refs/heads/stage'
+    runs-on: ubuntu-latest
+    environment: stage
+    steps:
+      - name: Use Node.js 24
+        uses: actions/setup-node@v6
+        with:
+          node-version: '24'
