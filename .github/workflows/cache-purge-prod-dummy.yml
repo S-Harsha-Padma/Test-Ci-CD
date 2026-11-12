@@ -3,12 +3,12 @@ on:
   workflow_dispatch:
     inputs:
       confirm_phrase:
-        description: 'Type exactly PURGE_CACHE_PRODUCTION_MESH_Dummy to confirm'
+        description: 'Type exactly PURGE_CACHE_PRODUCTION_MESH_Dummy to confirm (Clears entire mesh cache, causes temporary performance hit, should be avoided during peak production hours)'
         required: true
         type: string
 jobs:
   purge:
-    name: Purge Production Mesh Cache (This clears entire mesh cache, causes temporary performance hit, should be avoided during peak production hours)
+    name: Purge Production Mesh Cache (Clears entire mesh cache, causes temporary performance hit, should be avoided during peak production hours)
     if: github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     environment: production
