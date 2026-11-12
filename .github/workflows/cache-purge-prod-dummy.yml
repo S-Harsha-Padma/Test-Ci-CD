@@ -8,7 +8,7 @@ on:
         type: string
 jobs:
   purge:
-    name: Purge Production Mesh Cache
+    name: Purge Production Mesh Cache (This clears entire mesh cache, causes temporary performance hit, should be avoided during peak production hours)
     if: github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     environment: production
