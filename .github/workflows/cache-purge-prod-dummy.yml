@@ -1,0 +1,25 @@
+name: Purge Production Mesh Cache Dummy
+on:
+  workflow_dispatch:
+    inputs:
+      confirm_phrase:
+        description: 'Type exactly PURGE_CACHE_PRODUCTION_MESH_Dummy to confirm'
+        required: true
+        type: string
+jobs:
+  purge:
+    name: Purge Production Mesh Cache
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    environment: production
+    steps:
+      - name: Verify confirmation phrase
+        if: ${{ github.event.inputs.confirm_phrase != 'PURGE_CACHE_PRODUCTION_MESH_Dummy' }}
+        run: |
+          echo "::error::Production mesh cache purge aborted."
+          echo "Set the confirmation phrase to exactly: PURGE_CACHE_PRODUCTION_MESH_Dummy"
+          exit 1
+      - name: Use Node.js 24
+        uses: actions/setup-node@v6
+        with:
+          node-version: '24'
